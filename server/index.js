@@ -5,6 +5,8 @@ const cors = require("cors");
 const axios = require("axios");
 const xml2js = require("xml2js");
 const Location = require("./models/location");
+// const Event = require("./models/event");
+const { DOMParser } = require("xmldom");
 
 const app = express();
 
@@ -16,8 +18,84 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+const fetchData = async () => {
+  try {
+    // Fetch events data
+    const eventsResponse = await axios.get(
+      "https://www.lcsd.gov.hk/datagovhk/event/events.xml"
+    );
+    const eventsParser = new DOMParser();
+    const eventsXmlDoc = eventsParser.parseFromString(
+      eventsResponse.data,
+      "application/xml"
+    );
+    const events = eventsXmlDoc.getElementsByTagName("event");
+
+    // Fetch locations data
+    const locationsResponse = await axios.get(
+      "https://www.lcsd.gov.hk/datagovhk/event/venues.xml"
+    );
+    const locationsParser = new DOMParser();
+    const locationsXmlDoc = locationsParser.parseFromString(
+      locationsResponse.data,
+      "application/xml"
+    );
+    const locations = locationsXmlDoc.getElementsByTagName("venue");
+
+    const locationMap = {};
+    // Map location details to the location
+    for (let i = 0; i < locations.length; i++) {
+      const location = locations[i];
+      const locationDetails = {};
+      const childNodes = location.childNodes;
+      for (let j = 0; j < childNodes.length; j++) {
+        const child = childNodes[j];
+        if (child.nodeType === 1) {
+          locationDetails[child.nodeName] = child.textContent;
+          locationDetails.id = location.getAttribute("id");
+        }
+      }
+
+      locationMap[locationDetails.id] = locationDetails;
+    }
+
+    const eventList = [];
+    // Map event details to the event
+    for (let i = 0; i < 10; i++) {
+      const event = events[i];
+      const eventDetails = {};
+      const childNodes = event.childNodes;
+
+      for (let j = 0; j < childNodes.length; j++) {
+        const child = childNodes[j];
+        if (child.nodeType === 1) {
+          eventDetails[child.nodeName] = child.textContent;
+        }
+      }
+
+      // Map location details to the event
+      if (eventDetails.venueid && locationMap[eventDetails.venueid]) {
+        eventDetails.venue = locationMap[eventDetails.venueid].venuee;
+      }
+
+      eventList.push({
+        title: eventDetails.titlee,
+        venue: eventDetails.venue,
+        dateTime: eventDetails.predateE,
+        description: eventDetails.desce,
+        presenter: eventDetails.presenterorge,
+      });
+    }
+
+    console.log(eventList);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 async function connectDB() {
   try {
+    await fetchData();
     await mongoose.connect(
       "mongodb+srv://csci2720:csci2720@cluster0.fbcue.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     );
