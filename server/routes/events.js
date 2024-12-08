@@ -4,7 +4,7 @@ const Event = require("../models/event");
 const Location = require("../models/location");
 const { authenticate, authorize } = require("../middleware/auth");
 
-// Public route
+// Public routes
 router.get("/", async (req, res) => {
   try {
     const events = await Event.find();
@@ -71,9 +71,15 @@ router.patch("/:id", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const eventID = req.params.id;
     const { title, dateTime, description, presenter, venue } = req.body;
+
     const location = await Location.findOne({
       name: venue,
     });
+    if (!location) {
+      res.status(404).json({ message: "Location not found" });
+      return;
+    }
+
     const updatedEvent = {
       title: title,
       dateTime: dateTime,

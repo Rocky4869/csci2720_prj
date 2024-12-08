@@ -9,6 +9,7 @@ const { DOMParser } = require("xmldom");
 const eventRoutes = require("./routes/events");
 const locationRoutes = require("./routes/locations");
 const authRoutes = require("./routes/auth");
+require("dotenv").config();
 
 const app = express();
 
