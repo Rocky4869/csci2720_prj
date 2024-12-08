@@ -3,9 +3,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
-const xml2js = require("xml2js");
 const Location = require("./models/location");
-// const Event = require("./models/event");
+const Event = require("./models/event");
 const { DOMParser } = require("xmldom");
 
 const app = express();
@@ -92,9 +91,14 @@ const fetchData = async () => {
       });
     }
 
-    // Filter venues with at least 3 events
+    // Filter venues with at least 3 events and have lat and long
     const filteredVenues = Object.keys(venueEventCount)
-      .filter((venueId) => venueEventCount[venueId] >= 3)
+      .filter(
+        (venueId) =>
+          venueEventCount[venueId] >= 3 &&
+          locationMap[venueId].latitude &&
+          locationMap[venueId].longitude
+      )
       .slice(0, 10);
 
     const filteredEventList = eventList.filter((event) =>
@@ -112,7 +116,36 @@ const fetchData = async () => {
       };
     });
 
-    console.log(finalEventList);
+    // Insert locations to the database
+    const locationIdMap = {};
+    for (let i = 0; i < filteredVenues.length; i++) {
+      const venueId = filteredVenues[i];
+      const location = locationMap[venueId];
+      const locationData = {
+        name: location.venuee,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      };
+
+      const locationModel = new Location(locationData);
+      const savedLocation = await locationModel.save();
+      locationIdMap[venueId] = savedLocation._id;
+    }
+
+    // Insert events to the database
+    for (let i = 0; i < finalEventList.length; i++) {
+      const event = finalEventList[i];
+      const eventData = {
+        title: event.title,
+        dateTime: event.dateTime,
+        description: event.description,
+        presenter: event.presenter,
+        venue: locationIdMap[filteredEventList[i].venueId],
+      };
+
+      const eventModel = new Event(eventData);
+      await eventModel.save();
+    }
   } catch (error) {
     console.log(error);
   }
@@ -120,10 +153,10 @@ const fetchData = async () => {
 
 async function connectDB() {
   try {
-    await fetchData();
     await mongoose.connect(
       "mongodb+srv://csci2720:csci2720@cluster0.fbcue.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     );
+    await fetchData();
     app.listen(3000, () => console.log("Server running on port 3000"));
   } catch (error) {
     console.log(error);
