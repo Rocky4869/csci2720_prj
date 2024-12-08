@@ -1,13 +1,13 @@
 const express = require("express");
-const Location = require("../models/location");
 const router = express.Router();
+const Location = require("../models/location");
 
-router.get("/locations", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const locations = await Location.find();
     res.json(locations);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

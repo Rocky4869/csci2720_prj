@@ -6,6 +6,8 @@ const axios = require("axios");
 const Location = require("./models/location");
 const Event = require("./models/event");
 const { DOMParser } = require("xmldom");
+const eventRoutes = require("./routes/events");
+const locationRoutes = require("./routes/locations");
 
 const app = express();
 
@@ -17,8 +19,14 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+app.use("/events", eventRoutes);
+app.use("/locations", locationRoutes);
+
 const fetchData = async () => {
   try {
+    // Drop the database
+    await mongoose.connection.db.dropDatabase();
+
     // Fetch events data
     const eventsResponse = await axios.get(
       "https://www.lcsd.gov.hk/datagovhk/event/events.xml"
