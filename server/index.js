@@ -27,8 +27,10 @@ app.use("/locations", locationRoutes);
 
 const fetchData = async () => {
   try {
-    // Drop the database
-    await mongoose.connection.db.dropDatabase();
+    // Drop the database - events and locations
+    // await mongoose.connection.db.dropDatabase();
+    await Location.deleteMany({});
+    await Event.deleteMany({});
 
     // Fetch events data
     const eventsResponse = await axios.get(

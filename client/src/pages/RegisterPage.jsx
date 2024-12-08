@@ -5,27 +5,21 @@ import { useNavigate } from "react-router-dom";
 const RegisterPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/auth/register", {
+      const res = await axios.post("http://localhost:3000/auth/register", {
         username,
         password,
-        role,
       });
-      setSuccess("User registered successfully");
-      setError("");
+      console.log(res.data.message);
       setTimeout(() => {
-        navigate("/login"); // Redirect to login page after successful registration
+        navigate("/login");
       }, 2000);
     } catch (err) {
-      setError(err.response.data.message);
-      setSuccess("");
+      console.error(err);
     }
   };
 
@@ -51,15 +45,6 @@ const RegisterPage = () => {
             required
           />
         </div>
-        <div>
-          <label>Role:</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
         <button type="submit">Register</button>
       </form>
     </div>
