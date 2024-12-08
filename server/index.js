@@ -135,6 +135,7 @@ const fetchData = async () => {
       const venueId = filteredVenues[i];
       const location = locationMap[venueId];
       const locationData = {
+        id: location.id,
         name: location.venuee,
         latitude: location.latitude,
         longitude: location.longitude,

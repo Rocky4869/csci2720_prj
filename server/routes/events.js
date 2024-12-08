@@ -27,8 +27,8 @@ router.get("/:id", async (req, res) => {
 // Admin routes
 router.post("/", authenticate, authorize(["admin"]), async (req, res) => {
   try {
-    const { title, dateTime, description, presenter, venue } = req.body;
-    const location = await Location.findOne({ name: venue });
+    const { title, dateTime, description, presenter, id } = req.body;
+    const location = await Location.findOne({ id: id });
     const eventId = (await Event.countDocuments()) + 1;
 
     if (!location) {
@@ -70,10 +70,10 @@ router.delete("/:id", authenticate, authorize(["admin"]), async (req, res) => {
 router.patch("/:id", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const eventID = req.params.id;
-    const { title, dateTime, description, presenter, venue } = req.body;
+    const { title, dateTime, description, presenter, id } = req.body;
 
     const location = await Location.findOne({
-      name: venue,
+      id: id,
     });
     if (!location) {
       res.status(404).json({ message: "Location not found" });
