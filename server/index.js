@@ -60,8 +60,10 @@ const fetchData = async () => {
     }
 
     const eventList = [];
+    const venueEventCount = {};
+
     // Map event details to the event
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const eventDetails = {};
       const childNodes = event.childNodes;
@@ -73,21 +75,44 @@ const fetchData = async () => {
         }
       }
 
-      // Map location details to the event
-      if (eventDetails.venueid && locationMap[eventDetails.venueid]) {
-        eventDetails.venue = locationMap[eventDetails.venueid].venuee;
+      // Count events per venue
+      if (eventDetails.venueid) {
+        if (!venueEventCount[eventDetails.venueid]) {
+          venueEventCount[eventDetails.venueid] = 0;
+        }
+        venueEventCount[eventDetails.venueid]++;
       }
 
       eventList.push({
         title: eventDetails.titlee,
-        venue: eventDetails.venue,
+        venueId: eventDetails.venueid,
         dateTime: eventDetails.predateE,
         description: eventDetails.desce,
         presenter: eventDetails.presenterorge,
       });
     }
 
-    console.log(eventList);
+    // Filter venues with at least 3 events
+    const filteredVenues = Object.keys(venueEventCount)
+      .filter((venueId) => venueEventCount[venueId] >= 3)
+      .slice(0, 10);
+
+    const filteredEventList = eventList.filter((event) =>
+      filteredVenues.includes(event.venueId)
+    );
+
+    // Map location details to the filtered events
+    const finalEventList = filteredEventList.map((event) => {
+      return {
+        title: event.title,
+        venue: locationMap[event.venueId].venuee,
+        dateTime: event.dateTime,
+        description: event.description ? event.description : "N/A",
+        presenter: event.presenter,
+      };
+    });
+
+    console.log(finalEventList);
   } catch (error) {
     console.log(error);
   }
