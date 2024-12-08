@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Event = require("../models/event");
 const Location = require("../models/location");
+const { authenticate, authorize } = require("../middleware/auth");
 
+// Public route
 router.get("/", async (req, res) => {
   try {
     const events = await Event.find();
@@ -22,7 +24,8 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+// Admin routes
+router.post("/", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const { title, dateTime, description, presenter, venue } = req.body;
     const location = await Location.findOne({ name: venue });
@@ -48,7 +51,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const eventID = req.params.id;
     const event = await Event.findOneAndDelete({ eventId: eventID });
@@ -64,7 +67,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const eventID = req.params.id;
     const { title, dateTime, description, presenter, venue } = req.body;
