@@ -144,6 +144,7 @@ const fetchData = async () => {
     for (let i = 0; i < finalEventList.length; i++) {
       const event = finalEventList[i];
       const eventData = {
+        eventId: i + 1,
         title: event.title,
         dateTime: event.dateTime,
         description: event.description,
