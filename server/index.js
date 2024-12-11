@@ -172,7 +172,7 @@ async function connectDB() {
     await mongoose.connect(
       "mongodb+srv://csci2720:csci2720@cluster0.fbcue.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     );
-    await fetchData();
+    // await fetchData();
     app.listen(3000, () => console.log("Server running on port 3000"));
   } catch (error) {
     console.log(error);
