@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import SingleLocationPage from "./pages/SingleLocationPage";
 import MapPage from "./pages/MapPage";
 import RegisterPage from "./pages/RegisterPage";
+import EventPage from "./pages/EventPage";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
@@ -19,6 +20,7 @@ function App() {
           <ToastContainer position="bottom-right" />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/event" element={<EventPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/favorites" element={<FavoritePage />} />

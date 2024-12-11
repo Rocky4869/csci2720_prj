@@ -169,8 +169,10 @@ const HomePage = () => {
               <Select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
+                displayEmpty
+                inputProps={{ "aria-label": "Filter by Category" }}
               >
-                <MenuItem value="">All</MenuItem>
+                <MenuItem value="">All Categories</MenuItem>
                 <MenuItem value="Auditorium">Auditorium</MenuItem>
                 <MenuItem value="Function Room">Function Room</MenuItem>
                 <MenuItem value="Cultural Activities Hall">
