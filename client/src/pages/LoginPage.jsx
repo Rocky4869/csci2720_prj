@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Link,
+  Box,
+} from "@mui/material";
+import BiotechIcon from "@mui/icons-material/Biotech";
+import { toast } from "react-toastify";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -34,44 +46,86 @@ function LoginPage() {
       const token = res.data.token;
       localStorage.setItem("token", token);
       const decodedToken = decodeToken(token);
-      console.log(decodedToken.role);
+      toast.success("Login successful");
       if (decodedToken && decodedToken.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/home");
       }
     } catch (err) {
+      toast.error("Incorrect username or password");
       console.error(err);
     }
   };
 
   return (
-    <div className="login-page">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
-        <br />
-        <a href="/register">Register</a>
-      </form>
-    </div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "linear-gradient(90deg, #4a00e0, #8e2de2, #f27121)",
+      }}
+    >
+      <Card sx={{ maxWidth: 400, width: "100%", padding: 2 }}>
+        <CardContent>
+          <div className="flex flex-row items-center justify-center">
+            <BiotechIcon sx={{ fontSize: 60 }} />
+            <Typography
+              variant="h4"
+              component="div"
+              fontWeight="bold"
+              sx={{ fontSize: 30 }}
+            >
+              Cultural Scope
+            </Typography>
+          </div>
+          <div className="mt-4 text-lg">Welcome to Cultural Scope</div>
+          <div className="mb-1 text-sm mt-1">
+            Explore Hong Kong unique cultural events
+          </div>
+          <form onSubmit={handleLogin}>
+            <TextField
+              label="Username"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2, mb: 2, textTransform: "none" }}
+            >
+              Sign In
+            </Button>
+            <div className="flex flex-row justify-around mt-2">
+              <Link href="/register" variant="body2">
+                Register
+              </Link>
+              <Link href="/" variant="body2">
+                Forgot password?
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
 
