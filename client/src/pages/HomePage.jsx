@@ -16,9 +16,11 @@ import {
   Paper,
   Slider,
   InputAdornment,
+  TableSortLabel,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [locations, setLocations] = useState([]);
@@ -26,6 +28,7 @@ const HomePage = () => {
   const [distance, setDistance] = useState("");
   const [category, setCategory] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const fetchData = async () => {
     try {
@@ -44,6 +47,7 @@ const HomePage = () => {
       }));
 
       setLocations(updatedLocations);
+      setFilteredLocations(updatedLocations);
     } catch (err) {
       console.error(err);
     }
@@ -76,6 +80,18 @@ const HomePage = () => {
     }
 
     setFilteredLocations(filtered);
+  };
+
+  const handleSort = () => {
+    const sorted = [...filteredLocations].sort((a, b) => {
+      if (sortOrder === "asc") {
+        return a.eventCount - b.eventCount;
+      } else {
+        return b.eventCount - a.eventCount;
+      }
+    });
+    setFilteredLocations(sorted);
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
   return (
@@ -133,15 +149,25 @@ const HomePage = () => {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Location</TableCell>
-                <TableCell>Number of Events</TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active
+                    direction={sortOrder}
+                    onClick={handleSort}
+                  >
+                    Number of Events
+                  </TableSortLabel>
+                </TableCell>
                 <TableCell>Favorite</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {locations.map((location) => (
+              {filteredLocations.map((location) => (
                 <TableRow key={location.id}>
                   <TableCell>{location.id}</TableCell>
-                  <TableCell>{location.name}</TableCell>
+                  <TableCell>
+                    <Link to={`/locations/${location.id}`}>{location.name}</Link>
+                  </TableCell>
                   <TableCell>{location.eventCount}</TableCell>
                   <TableCell>
                     <Button

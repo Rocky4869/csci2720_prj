@@ -23,7 +23,7 @@ function App() {
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/favorites" element={<FavoritePage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/location/:id" element={<SingleLocationPage />} />
+            <Route path="/locations/:id" element={<SingleLocationPage />} />
             <Route path="/map" element={<MapPage />} />
             <Route path="*" element={<LoginPage />} />
           </Routes>
