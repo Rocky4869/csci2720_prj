@@ -56,14 +56,6 @@ const Navbar = () => {
           </Button>
           <Button
             color="inherit"
-            startIcon={<LocationOnIcon />}
-            sx={{ textTransform: "none" }}
-            onClick={() => (window.location.href = "/location")}
-          >
-            Venue
-          </Button>
-          <Button
-            color="inherit"
             startIcon={<MapIcon />}
             sx={{ textTransform: "none" }}
             onClick={() => (window.location.href = "/map")}

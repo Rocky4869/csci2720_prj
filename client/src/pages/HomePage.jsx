@@ -166,7 +166,9 @@ const HomePage = () => {
                 <TableRow key={location.id}>
                   <TableCell>{location.id}</TableCell>
                   <TableCell>
-                    <Link to={`/locations/${location.id}`}>{location.name}</Link>
+                    <Link to={`/locations/${location.id}`}>
+                      {location.name}
+                    </Link>
                   </TableCell>
                   <TableCell>{location.eventCount}</TableCell>
                   <TableCell>
