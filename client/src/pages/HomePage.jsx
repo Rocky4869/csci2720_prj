@@ -29,6 +29,10 @@ const HomePage = () => {
   const [category, setCategory] = useState("");
   const [keyword, setKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [currentLocation, setCurrentLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
 
   const fetchData = async () => {
     try {
@@ -55,22 +59,59 @@ const HomePage = () => {
 
   useEffect(() => {
     fetchData();
+
+    // Get current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting current location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
   }, []);
 
-  const handleAddFavorite = (locationId) => {
-    console.log("Add favorite for location:", locationId);
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   };
 
-  const handleFilter = () => {
+  useEffect(() => {
     let filtered = locations;
 
-    if (distance) {
-      // Assuming each location has a distance property
-      filtered = filtered.filter((location) => location.distance <= distance);
+    if (distance && currentLocation.latitude && currentLocation.longitude) {
+      filtered = filtered.filter(
+        (location) =>
+          haversineDistance(
+            currentLocation.latitude,
+            currentLocation.longitude,
+            location.latitude,
+            location.longitude
+          ) <= distance
+      );
     }
 
     if (category) {
-      filtered = filtered.filter((location) => location.category === category);
+      filtered = filtered.filter((location) =>
+        location.name.includes(category)
+      );
     }
 
     if (keyword) {
@@ -80,6 +121,10 @@ const HomePage = () => {
     }
 
     setFilteredLocations(filtered);
+  }, [distance, category, keyword, locations]);
+
+  const handleAddFavorite = (locationId) => {
+    console.log("Add favorite for location:", locationId);
   };
 
   const handleSort = () => {
@@ -115,6 +160,9 @@ const HomePage = () => {
                 min={0}
                 max={100}
               />
+              <Typography id="distance-slider" gutterBottom>
+                {distance} km
+              </Typography>
             </FormControl>
             <FormControl fullWidth margin="normal">
               <Typography gutterBottom>Filter by Category</Typography>
@@ -122,9 +170,18 @@ const HomePage = () => {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
-                <MenuItem value="Category1">Category1</MenuItem>
-                <MenuItem value="Category2">Category2</MenuItem>
-                <MenuItem value="Category3">Category3</MenuItem>
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="Auditorium">Auditorium</MenuItem>
+                <MenuItem value="Function Room">Function Room</MenuItem>
+                <MenuItem value="Cultural Activities Hall">
+                  Cultural Activities Hall
+                </MenuItem>
+                <MenuItem value="Exhibition Gallery">
+                  Exhibition Gallery
+                </MenuItem>
+                <MenuItem value="Dance Studio">Dance Studio</MenuItem>
+                <MenuItem value="Lecture Room">Lecture Room</MenuItem>
+                <MenuItem value="Conference Room">Conference Room</MenuItem>
               </Select>
             </FormControl>
             <FormControl fullWidth margin="normal">
