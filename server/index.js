@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
+const nodemon = require("nodemon");
 const Location = require("./models/location");
 const Event = require("./models/event");
 const { DOMParser } = require("xmldom");

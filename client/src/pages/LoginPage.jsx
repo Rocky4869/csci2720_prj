@@ -38,7 +38,7 @@ function LoginPage() {
       if (decodedToken && decodedToken.role === "admin") {
         navigate("/admin");
       } else {
-        navigate("/");
+        navigate("/home");
       }
     } catch (err) {
       console.error(err);
@@ -68,6 +68,8 @@ function LoginPage() {
           />
         </div>
         <button type="submit">Login</button>
+        <br />
+        <a href="/register">Register</a>
       </form>
     </div>
   );
