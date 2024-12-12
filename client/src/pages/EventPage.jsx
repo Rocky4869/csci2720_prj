@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Container,
@@ -11,6 +11,11 @@ import {
   TableRow,
   TablePagination,
   IconButton,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  TextField,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -19,6 +24,9 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 const EventPage = () => {
   const [events, setEvents] = useState([]);
   const [likedEvents, setLikedEvents] = useState({});
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [filterLiked, setFilterLiked] = useState(false);
+  const [filterPrice, setFilterPrice] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -93,12 +101,59 @@ const EventPage = () => {
     }
   };
 
+  useEffect(() => {
+    let filtered = events;
+
+    if (filterLiked) {
+      filtered = filtered.filter((event) => likedEvents[event._id]);
+    }
+
+    if (filterPrice) {
+      filtered = filtered.filter((event) => {
+        const prices =
+          event.price
+            ?.match(/\$\d+/g)
+            ?.map((price) => parseFloat(price.replace("$", ""))) || [];
+        const minPrice = prices.length > 0 ? Math.min(...prices) : Infinity;
+
+        return (
+          minPrice <= filterPrice || event.price.includes("Free admission.")
+        );
+      });
+    }
+
+    setFilteredEvents(filtered);
+  }, [filterLiked, filterPrice, events, likedEvents]);
+
   return (
     <div style={{ backgroundColor: "#F5F5F5" }}>
       <Navbar />
 
       <Container>
         <div className="mt-10">
+          <div className="flex flex-row gap-5 mb-5">
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Filter by Liked Events</InputLabel>
+              <Select
+                value={filterLiked}
+                onChange={(e) => setFilterLiked(e.target.value)}
+                label="Filter by Liked Events"
+              >
+                <MenuItem value={false}>All Events</MenuItem>
+                <MenuItem value={true}>Liked Events</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Filter by Price (under)"
+                type="number"
+                value={filterPrice}
+                onChange={(e) => setFilterPrice(e.target.value)}
+                variant="outlined"
+                fullWidth
+              />
+            </FormControl>
+          </div>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -114,7 +169,7 @@ const EventPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {events
+                {filteredEvents
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((event) => (
                     <TableRow key={event._id}>
