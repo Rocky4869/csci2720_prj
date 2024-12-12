@@ -102,6 +102,7 @@ const fetchData = async () => {
         dateTime: eventDetails.predateE,
         description: eventDetails.desce,
         presenter: eventDetails.presenterorge,
+        price: eventDetails.pricee,
       });
     }
 
@@ -125,8 +126,9 @@ const fetchData = async () => {
         title: event.title,
         venue: locationMap[event.venueId].venuee,
         dateTime: event.dateTime,
-        description: event.description ? event.description : "N/A",
+        description: event.description ? event.description : "No description.",
         presenter: event.presenter,
+        price: event.price,
       };
     });
 
@@ -157,6 +159,7 @@ const fetchData = async () => {
         description: event.description,
         presenter: event.presenter,
         venue: locationIdMap[filteredEventList[i].venueId],
+        price: event.price,
       };
 
       const eventModel = new Event(eventData);

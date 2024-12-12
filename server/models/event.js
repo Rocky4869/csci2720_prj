@@ -10,6 +10,7 @@ const eventSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Location",
   },
+  price: String,
 });
 
 module.exports = mongoose.model("Event", eventSchema);
