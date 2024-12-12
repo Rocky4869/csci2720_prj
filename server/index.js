@@ -11,6 +11,7 @@ const eventRoutes = require("./routes/events");
 const locationRoutes = require("./routes/locations");
 const authRoutes = require("./routes/auth");
 const likeRoutes = require("./routes/likes");
+const bookingRoutes = require("./routes/bookings");
 require("dotenv").config();
 
 const app = express();
@@ -27,6 +28,7 @@ app.use("/auth", authRoutes);
 app.use("/events", eventRoutes);
 app.use("/locations", locationRoutes);
 app.use("/likes", likeRoutes);
+app.use("/bookings", bookingRoutes);
 
 const fetchData = async () => {
   try {

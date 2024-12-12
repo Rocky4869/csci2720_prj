@@ -16,17 +16,20 @@ import {
   InputLabel,
   Select,
   TextField,
+  Button,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import { toast } from "react-toastify";
 
 const EventPage = () => {
   const [events, setEvents] = useState([]);
   const [likedEvents, setLikedEvents] = useState({});
   const [filteredEvents, setFilteredEvents] = useState([]);
-  const [filterLiked, setFilterLiked] = useState(false);
+  const [filterLiked, setFilterLiked] = useState("all");
   const [filterPrice, setFilterPrice] = useState(0);
+  const [bookedEvents, setBookedEvents] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -66,10 +69,25 @@ const EventPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-    fetchLikedEvents();
-  }, []);
+  const fetchBookedEvents = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/bookings/events",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const bookedEvents = response.data.reduce((acc, event) => {
+        acc[event._id] = true;
+        return acc;
+      }, {});
+      setBookedEvents(bookedEvents);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -84,7 +102,6 @@ const EventPage = () => {
     try {
       const isLiked = likedEvents[eventId];
       const updatedLikedEvents = { ...likedEvents, [eventId]: !isLiked };
-      console.log(updatedLikedEvents);
       setLikedEvents(updatedLikedEvents);
 
       await axios.post(
@@ -101,11 +118,39 @@ const EventPage = () => {
     }
   };
 
+  const handleBook = async (eventId) => {
+    try {
+      const isBooked = bookedEvents[eventId];
+      const updatedBookedEvents = { ...bookedEvents, [eventId]: !isBooked };
+      setBookedEvents(updatedBookedEvents);
+
+      await axios.post(
+        `http://localhost:3000/bookings/${eventId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      toast.success(
+        isBooked
+          ? "Booking canceled successfully!"
+          : "Event booked successfully!"
+      );
+    } catch (err) {
+      toast.error("Failed to book the event. Please try again.");
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     let filtered = events;
 
-    if (filterLiked) {
+    if (filterLiked === "liked") {
       filtered = filtered.filter((event) => likedEvents[event._id]);
+    } else if (filterLiked === "booked") {
+      filtered = filtered.filter((event) => bookedEvents[event._id]);
     }
 
     if (filterPrice) {
@@ -123,7 +168,13 @@ const EventPage = () => {
     }
 
     setFilteredEvents(filtered);
-  }, [filterLiked, filterPrice, events, likedEvents]);
+  }, [filterLiked, filterPrice, events, likedEvents, bookedEvents]);
+
+  useEffect(() => {
+    fetchData();
+    fetchLikedEvents();
+    fetchBookedEvents();
+  }, []);
 
   return (
     <div style={{ backgroundColor: "#F5F5F5" }}>
@@ -133,14 +184,15 @@ const EventPage = () => {
         <div className="mt-10">
           <div className="flex flex-row gap-5 mb-5">
             <FormControl fullWidth margin="normal">
-              <InputLabel>Filter by Liked Events</InputLabel>
+              <InputLabel>Filter by Events</InputLabel>
               <Select
                 value={filterLiked}
                 onChange={(e) => setFilterLiked(e.target.value)}
                 label="Filter by Liked Events"
               >
-                <MenuItem value={false}>All Events</MenuItem>
-                <MenuItem value={true}>Liked Events</MenuItem>
+                <MenuItem value="all">All Events</MenuItem>
+                <MenuItem value="liked">Liked Events</MenuItem>
+                <MenuItem value="booked">Booked Events</MenuItem>
               </Select>
             </FormControl>
             <FormControl fullWidth margin="normal">
@@ -166,6 +218,7 @@ const EventPage = () => {
                   <TableCell>Presenter</TableCell>
                   <TableCell>Price</TableCell>
                   <TableCell>Like</TableCell>
+                  <TableCell>Book</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -190,6 +243,18 @@ const EventPage = () => {
                             <ThumbUpOffAltIcon />
                           )}
                         </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          color="warning"
+                          sx={{
+                            textTransform: "none",
+                          }}
+                          onClick={() => handleBook(event._id)}
+                        >
+                          {bookedEvents[event._id] ? "Cancel" : "Book"}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
