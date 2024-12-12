@@ -132,7 +132,7 @@ function LoginPage() {
               </Button>
               <Button
                 component={Link}
-                href="/"
+                href="/forgot-password"
                 variant="text"
                 sx={{ textTransform: "none" }}
               >

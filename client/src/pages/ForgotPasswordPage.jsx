@@ -13,42 +13,24 @@ import {
 import BiotechIcon from "@mui/icons-material/Biotech";
 import { toast } from "react-toastify";
 
-const RegisterPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
     try {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        toast.error("Invalid email format. Please try again.");
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        toast.error("Passwords do not match, please try again.");
-        return;
-      }
-      const res = await axios.post("http://localhost:3000/auth/register", {
-        username,
-        password,
-        email,
-      });
-      toast.success("Registration successful");
+      const res = await axios.post(
+        "http://localhost:3000/auth/forgot-password",
+        {
+          email,
+        }
+      );
+      toast.success("Password reset link sent to your email.");
       navigate("/login");
     } catch (err) {
-      if (err.response && err.response.status === 409) {
-        toast.error(
-          "Username already exists. Please choose a different username."
-        );
-      } else {
-        toast.error("An error occurred. Please try again.");
-      }
+      toast.error("An error occurred. Please try again.");
       console.error(err);
     }
   };
@@ -76,48 +58,18 @@ const RegisterPage = () => {
               Cultural Scope
             </Typography>
           </div>
-          <div className="mt-4 text-lg">Welcome to Cultural Scope</div>
+          <div className="mt-4 text-lg">Forgot Password</div>
           <div className="mb-1 text-sm mt-1">
-            Explore Hong Kong unique cultural events
+            Enter your email to receive a password reset link.
           </div>
-          <form onSubmit={handleRegister}>
+          <form onSubmit={handleForgotPassword}>
             <TextField
               label="Email"
-              type="email"
               variant="outlined"
               fullWidth
               margin="normal"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <TextField
-              label="Username"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-            <TextField
-              label="Password"
-              type="password"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <TextField
-              label="Confirm Password"
-              type="password"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
             <Button
@@ -135,11 +87,11 @@ const RegisterPage = () => {
                 },
               }}
             >
-              Register
+              Send Reset Link
             </Button>
             <Button
               component={Link}
-              href="/"
+              href="/login"
               variant="outlined"
               fullWidth
               sx={{ textTransform: "none" }}
@@ -153,4 +105,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default ForgotPasswordPage;

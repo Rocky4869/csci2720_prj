@@ -9,6 +9,7 @@ import SingleLocationPage from "./pages/SingleLocationPage";
 import MapPage from "./pages/MapPage";
 import RegisterPage from "./pages/RegisterPage";
 import EventPage from "./pages/EventPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
@@ -20,6 +21,7 @@ function App() {
           <ToastContainer position="bottom-right" />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/event" element={<EventPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/admin" element={<AdminPage />} />
