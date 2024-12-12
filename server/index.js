@@ -10,6 +10,7 @@ const { DOMParser } = require("xmldom");
 const eventRoutes = require("./routes/events");
 const locationRoutes = require("./routes/locations");
 const authRoutes = require("./routes/auth");
+const likeRoutes = require("./routes/likes");
 require("dotenv").config();
 
 const app = express();
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/events", eventRoutes);
 app.use("/locations", locationRoutes);
+app.use("/likes", likeRoutes);
 
 const fetchData = async () => {
   try {
@@ -128,7 +130,7 @@ const fetchData = async () => {
         dateTime: event.dateTime,
         description: event.description ? event.description : "No description.",
         presenter: event.presenter,
-        price: event.price,
+        price: event.price ? event.price : "Not Applicable.",
       };
     });
 

@@ -43,9 +43,7 @@ const RegisterPage = () => {
       navigate("/login");
     } catch (err) {
       if (err.response && err.response.status === 409) {
-        toast.error(
-          "Username already exists. Please choose a different username."
-        );
+        toast.error("Email or username already exists. Please try again.");
       } else {
         toast.error("An error occurred. Please try again.");
       }

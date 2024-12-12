@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
+  likedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
 });
 
 userSchema.pre("save", async function (next) {

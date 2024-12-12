@@ -10,12 +10,15 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  IconButton,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 
 const EventPage = () => {
   const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [likedEvents, setLikedEvents] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -38,8 +41,26 @@ const EventPage = () => {
     }
   };
 
+  const fetchLikedEvents = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/likes/events", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const likedEvents = response.data.reduce((acc, event) => {
+        acc[event._id] = true;
+        return acc;
+      }, {});
+      setLikedEvents(likedEvents);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchLikedEvents();
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -49,6 +70,27 @@ const EventPage = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleLike = async (eventId) => {
+    try {
+      const isLiked = likedEvents[eventId];
+      const updatedLikedEvents = { ...likedEvents, [eventId]: !isLiked };
+      console.log(updatedLikedEvents);
+      setLikedEvents(updatedLikedEvents);
+
+      await axios.post(
+        `http://localhost:3000/likes/${eventId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -85,7 +127,15 @@ const EventPage = () => {
                         {event.presenter.split("Presented by")[1]}
                       </TableCell>
                       <TableCell>{event.price}</TableCell>
-                      <TableCell>{event.like}</TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => handleLike(event._id)}>
+                          {likedEvents[event._id] ? (
+                            <ThumbUpAltIcon />
+                          ) : (
+                            <ThumbUpOffAltIcon />
+                          )}
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   ))}
               </TableBody>
