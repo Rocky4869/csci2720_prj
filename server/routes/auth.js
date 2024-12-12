@@ -6,6 +6,12 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
   try {
     const { username, password, role } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(409).json({ message: "Username already exists" });
+    }
+
     const user = new User({ username, password, role });
     await user.save();
     res.status(201).json({ message: "User registered successfully" });

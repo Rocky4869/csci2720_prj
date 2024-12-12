@@ -108,20 +108,37 @@ function LoginPage() {
             <Button
               type="submit"
               variant="contained"
-              color="primary"
               fullWidth
-              sx={{ mt: 2, mb: 2, textTransform: "none" }}
+              sx={{
+                mt: 2,
+                mb: 2,
+                textTransform: "none",
+                backgroundColor: "black",
+                ":hover": {
+                  backgroundColor: "black",
+                },
+              }}
             >
               Sign In
             </Button>
-            <div className="flex flex-row justify-around mt-2">
-              <Link href="/register" variant="body2">
+            <Box display="flex" justifyContent="space-around" mt={2}>
+              <Button
+                component={Link}
+                href="/register"
+                variant="text"
+                sx={{ textTransform: "none" }}
+              >
                 Register
-              </Link>
-              <Link href="/" variant="body2">
+              </Button>
+              <Button
+                component={Link}
+                href="/"
+                variant="text"
+                sx={{ textTransform: "none" }}
+              >
                 Forgot password?
-              </Link>
-            </div>
+              </Button>
+            </Box>
           </form>
         </CardContent>
       </Card>
