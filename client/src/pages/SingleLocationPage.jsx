@@ -69,7 +69,12 @@ const SingleLocationPage = () => {
           `http://localhost:3000/comments?locationId=${id}`
         );
         const commentsData = await commentsResponse.json();
-        setComments(commentsData);
+
+        // Sort comments by `createdAt` in ascending order
+        const sortedComments = commentsData.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        );
+        setComments(sortedComments);
       } catch (err) {
         console.error("Error fetching location or comments:", err);
       }
@@ -118,7 +123,12 @@ const SingleLocationPage = () => {
       }
 
       const newCommentData = await response.json();
-      setComments([...comments, newCommentData]); // Update the comments list
+
+      // Add the new comment to the array and sort again
+      const updatedComments = [...comments, newCommentData].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+      setComments(updatedComments); // Update the comments list
       setNewComment(""); // Clear the comment input
     } catch (err) {
       console.error("Error adding comment:", err);
