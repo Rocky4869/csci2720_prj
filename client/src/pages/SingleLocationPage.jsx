@@ -11,18 +11,47 @@ import {
   TableRow,
   Paper,
   TextField,
-  InputAdornment,
   Grid,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import Navbar from "../components/Navbar";
 
 const SingleLocationPage = () => {
   const { id } = useParams(); // Get location ID from the URL
   const [location, setLocation] = useState(null); // Location details
-  const [comments, setComments] = useState([]); // Comments for the location
-  const [newComment, setNewComment] = useState(""); // New comment input
+  const [comments, setComments] = useState([]); // List of comments for the location
+  const [newComment, setNewComment] = useState(""); // New comment text
   const [isFavorite, setIsFavorite] = useState(false); // Favorite status
+  const [error, setError] = useState(""); // Error message for comment submission
+  const [username, setUsername] = useState(""); // Logged-in username
+
+  // Function to decode token and extract the username
+  const decodeToken = (token) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error("Invalid token", error);
+      return null;
+    }
+  };
+
+  // Fetch username from the token on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = decodeToken(token);
+      if (decodedToken && decodedToken.username) {
+        setUsername(decodedToken.username); // Set the logged-in username
+      }
+    }
+  }, []);
 
   // Fetch location details and comments
   useEffect(() => {
@@ -70,20 +99,30 @@ const SingleLocationPage = () => {
 
   // Handle adding a new comment
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+    // Validate input
+    if (!newComment.trim()) {
+      setError("Comment cannot be empty.");
+      return;
+    }
+    setError(""); // Clear previous errors
 
     try {
       const response = await fetch("http://localhost:3000/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locationId: id, text: newComment }),
+        body: JSON.stringify({ locationId: id, text: newComment, username }),
       });
 
+      if (!response.ok) {
+        throw new Error("Failed to add comment");
+      }
+
       const newCommentData = await response.json();
-      setComments([...comments, newCommentData]); // Update comments list
-      setNewComment(""); // Clear input field
+      setComments([...comments, newCommentData]); // Update the comments list
+      setNewComment(""); // Clear the comment input
     } catch (err) {
       console.error("Error adding comment:", err);
+      setError("Failed to add comment. Please try again.");
     }
   };
 
@@ -119,13 +158,13 @@ const SingleLocationPage = () => {
             sx={{
               mt: 2,
               textTransform: "none",
-              backgroundColor: "#FFFFFF", // White background
-              color: "#000000", // Black text
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Subtle shadow
-              borderRadius: "8px", // Rounded corners
+              backgroundColor: "#FFFFFF",
+              color: "#000000",
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+              borderRadius: "8px",
               "&:hover": {
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)", // Slightly increased shadow on hover
-                backgroundColor: "#f9f9f9", // Slightly darker white
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
+                backgroundColor: "#f9f9f9",
               },
             }}
           >
@@ -166,20 +205,30 @@ const SingleLocationPage = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>#</TableCell>
+                    <TableCell>Username</TableCell>
                     <TableCell>Comment</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {comments.length > 0 ? (
                     comments.map((comment, index) => (
-                      <TableRow key={index}>
+                      <TableRow key={comment._id || index}>
                         <TableCell>{index + 1}</TableCell>
-                        <TableCell>{comment.text}</TableCell>
+                        <TableCell>{comment.username}</TableCell>
+                        {/* Render newlines as <br /> */}
+                        <TableCell>
+                          {comment.text.split("\n").map((line, i) => (
+                            <span key={i}>
+                              {line}
+                              <br />
+                            </span>
+                          ))}
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={2} align="center">
+                      <TableCell colSpan={3} align="center">
                         No Comments
                       </TableCell>
                     </TableRow>
@@ -187,7 +236,14 @@ const SingleLocationPage = () => {
                 </TableBody>
               </Table>
 
-              {/* Add Comment */}
+              {/* Error Message */}
+              {error && (
+                <Typography color="error" sx={{ mt: 2 }}>
+                  {error}
+                </Typography>
+              )}
+
+              {/* Add Comment Form */}
               <TextField
                 label="Add a Comment"
                 value={newComment}
@@ -203,13 +259,13 @@ const SingleLocationPage = () => {
                 sx={{
                   mt: 2,
                   textTransform: "none",
-                  backgroundColor: "#FFFFFF", // White background
-                  color: "#000000", // Black text
-                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Subtle shadow
-                  borderRadius: "8px", // Rounded corners
+                  backgroundColor: "#FFFFFF",
+                  color: "#000000",
+                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                  borderRadius: "8px",
                   "&:hover": {
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)", // Slightly increased shadow on hover
-                    backgroundColor: "#f9f9f9", // Slightly darker white
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
+                    backgroundColor: "#f9f9f9",
                   },
                 }}
               >

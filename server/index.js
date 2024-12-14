@@ -6,11 +6,13 @@ const axios = require("axios");
 const nodemon = require("nodemon");
 const Location = require("./models/location");
 const Event = require("./models/event");
+const Comment = require("./models/comment"); // Import Comment model
 const { DOMParser } = require("xmldom");
 const eventRoutes = require("./routes/events");
 const locationRoutes = require("./routes/locations");
 const authRoutes = require("./routes/auth");
 const likeRoutes = require("./routes/likes");
+const commentRoutes = require("./routes/comments"); // Import Comments route
 require("dotenv").config();
 
 const app = express();
@@ -27,6 +29,7 @@ app.use("/auth", authRoutes);
 app.use("/events", eventRoutes);
 app.use("/locations", locationRoutes);
 app.use("/likes", likeRoutes);
+app.use("/comments", commentRoutes); // Use Comments route
 
 const fetchData = async () => {
   try {
