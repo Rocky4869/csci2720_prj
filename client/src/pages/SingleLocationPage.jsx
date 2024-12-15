@@ -155,17 +155,10 @@ const SingleLocationPage = () => {
           <Button
             variant="contained"
             onClick={handleAddToFavorite}
+            color="warning"
             sx={{
-              mt: 2,
               textTransform: "none",
-              backgroundColor: "#FFFFFF",
-              color: "#000000",
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-              borderRadius: "8px",
-              "&:hover": {
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
-                backgroundColor: "#f9f9f9",
-              },
+              mt: 3,
             }}
           >
             {isFavorite ? "Remove from Favorite" : "Add to Favorite"}

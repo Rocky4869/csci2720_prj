@@ -277,15 +277,10 @@ const HomePage = () => {
                   <TableCell>
                     <Button
                       variant="contained"
-                      color="primary"
                       onClick={() => handleAddFavorite(location._id)}
+                      color="warning"
                       sx={{
                         textTransform: "none",
-                        backgroundColor: "white",
-                        color: "black",
-                        "&:hover": {
-                          backgroundColor: "#f0f0f0",
-                        },
                       }}
                     >
                       {favLocation.includes(location._id)
