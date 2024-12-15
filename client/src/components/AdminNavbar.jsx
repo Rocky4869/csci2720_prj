@@ -3,9 +3,12 @@ import { jwtDecode } from "jwt-decode";
 import { Button, AppBar, Toolbar } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import EventIcon from "@mui/icons-material/Event";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AdminNavbar = () => {
   const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -23,7 +26,8 @@ const AdminNavbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    navigate("/login");
+    toast.success("Logout successful");
   };
 
   return (
