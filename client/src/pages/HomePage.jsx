@@ -49,7 +49,8 @@ const HomePage = () => {
 
       const updatedLocations = locations.map((location) => ({
         ...location,
-        eventCount: events.filter((event) => event.venue === location._id).length || 0,
+        eventCount:
+          events.filter((event) => event.venue === location._id).length || 0,
       }));
 
       setLocations(updatedLocations);
@@ -104,9 +105,7 @@ const HomePage = () => {
     const dLon = toRad(lon2 - lon1);
     const a =
       Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) ** 2;
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -180,10 +179,6 @@ const HomePage = () => {
     });
     setFilteredLocations(sorted);
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-  };
-
-  const handleAddFavorite = (locationId) => {
-    console.log("Add favorite for location:", locationId);
   };
 
   return (
@@ -404,7 +399,6 @@ const HomePage = () => {
                   <TableCell>
                     <Button
                       variant="contained"
-                      onClick={() => handleAddFavorite(location.id)}
                       onClick={() => handleAddFavorite(location._id)}
                       color="warning"
                       sx={{
