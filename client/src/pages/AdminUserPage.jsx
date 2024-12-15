@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Button,
@@ -21,7 +21,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import axios from "axios";
-import Navbar from "../components/AdminNavbar";
+import AdminNavbar from "../components/AdminNavbar";
 import { toast } from "react-toastify";
 
 const AdminUserPage = () => {
@@ -33,12 +33,16 @@ const AdminUserPage = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    role: "",
+    email: "",
+    role: "user",
+    likedEvents: [],
+    registeredEvents: [],
   });
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/users");
+      const response = await axios.post("http://localhost:3000/users");
+      console.log(response);
       setUsers(response.data);
     } catch (err) {
       console.error(err);
@@ -51,15 +55,21 @@ const AdminUserPage = () => {
       setSelectedUser(user);
       setFormData({
         username: user.username,
-        password: "",
+        password: user.password,
+        email: user.email,
         role: user.role,
+        likedEvents: user.likedEvents,
+        registeredEvents: user.registeredEvents,
       });
     } else {
       setSelectedUser(null);
       setFormData({
         username: "",
         password: "",
-        role: "",
+        email: "",
+        role: "user",
+        likedEvents: [],
+        registeredEvents: [],
       });
     }
     setOpen(true);
@@ -72,9 +82,10 @@ const AdminUserPage = () => {
 
   const handleSubmit = async () => {
     try {
+      console.log(formData);
       if (selectedUser) {
         await axios.put(
-          `http://localhost:3000/users/${selectedUser._id}`,
+          `http://localhost:3000/users/${selectedUser.username}`,
           formData,
           {
             headers: {
@@ -84,7 +95,7 @@ const AdminUserPage = () => {
         );
         toast.success("User updated successfully!");
       } else {
-        await axios.post("http://localhost:3000/users", formData, {
+        await axios.post("http://localhost:3000/users/create", formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -99,10 +110,10 @@ const AdminUserPage = () => {
     }
   };
 
-  const handleDelete = async (userId) => {
+  const handleDelete = async (username) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`http://localhost:3000/users/${userId}`, {
+        await axios.delete(`http://localhost:3000/users/${username}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -131,7 +142,7 @@ const AdminUserPage = () => {
 
   return (
     <div style={{ backgroundColor: "#F5F5F5" }}>
-      <Navbar />
+      <AdminNavbar />
       <Container>
         <div className="mt-10">
           <Button
@@ -148,6 +159,7 @@ const AdminUserPage = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>Username</TableCell>
+                  <TableCell>Email</TableCell>
                   <TableCell>Role</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
@@ -158,6 +170,7 @@ const AdminUserPage = () => {
                   .map((user) => (
                     <TableRow key={user._id}>
                       <TableCell>{user.username}</TableCell>
+                      <TableCell>{user.email}</TableCell>
                       <TableCell>{user.role}</TableCell>
                       <TableCell>
                         <Button
@@ -206,12 +219,23 @@ const AdminUserPage = () => {
                 margin="normal"
               />
               <TextField
+              fullWidth
+              label="Password"
+              type="password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              margin="normal"
+              disabled={selectedUser ? true : false}  // Disable field if updating existing user
+              helperText={selectedUser ? "Password cannot be changed when updating user" : ""}
+              />
+              <TextField
                 fullWidth
-                type="password"
-                label="Password"
-                value={formData.password}
+                label="Email"
+                value={formData.email}
                 onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
+                  setFormData({ ...formData, email: e.target.value })
                 }
                 margin="normal"
               />
@@ -231,11 +255,7 @@ const AdminUserPage = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button
-                onClick={handleSubmit}
-                variant="contained"
-                color="primary"
-              >
+              <Button onClick={handleSubmit} variant="contained" color="primary">
                 {selectedUser ? "Update" : "Create"}
               </Button>
             </DialogActions>

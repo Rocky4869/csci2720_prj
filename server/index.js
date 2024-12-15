@@ -10,6 +10,7 @@ const Comment = require("./models/comment"); // Import Comment model
 const { DOMParser } = require("xmldom");
 const eventRoutes = require("./routes/events");
 const locationRoutes = require("./routes/locations");
+const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const likeRoutes = require("./routes/likes");
 const bookingRoutes = require("./routes/bookings");
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/events", eventRoutes);
 app.use("/locations", locationRoutes);
+app.use("/users", userRoutes);
 app.use("/likes", likeRoutes);
 app.use("/bookings", bookingRoutes);
 app.use("/comments", commentRoutes);
