@@ -14,6 +14,7 @@ const authRoutes = require("./routes/auth");
 const likeRoutes = require("./routes/likes");
 const bookingRoutes = require("./routes/bookings");
 const commentRoutes = require("./routes/comments"); // Import Comments route
+const favoriteRoutes = require("./routes/favorites"); // Import Favorites route
 require("dotenv").config();
 
 const app = express();
@@ -31,7 +32,8 @@ app.use("/events", eventRoutes);
 app.use("/locations", locationRoutes);
 app.use("/likes", likeRoutes);
 app.use("/bookings", bookingRoutes);
-app.use("/comments", commentRoutes); // Use Comments route
+app.use("/comments", commentRoutes);
+app.use("/favorites", favoriteRoutes); // Use the favorites route
 
 const fetchData = async () => {
   try {

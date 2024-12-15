@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [locations, setLocations] = useState([]);
+  const [favLocation, setFavLocation] = useState([]);
   const [filteredLocations, setFilteredLocations] = useState([]);
   const [distance, setDistance] = useState("");
   const [category, setCategory] = useState("");
@@ -59,6 +60,7 @@ const HomePage = () => {
 
   useEffect(() => {
     fetchData();
+    fetchFavLocation();
 
     // Get current location
     if (navigator.geolocation) {
@@ -77,6 +79,23 @@ const HomePage = () => {
       console.error("Geolocation is not supported by this browser.");
     }
   }, []);
+
+  const fetchFavLocation = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/favorites", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const favLocation = response.data.reduce(
+        (acc, location) => [...acc, location._id],
+        []
+      );
+      setFavLocation(favLocation);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const haversineDistance = (lat1, lon1, lat2, lon2) => {
     const toRad = (value) => (value * Math.PI) / 180;
@@ -123,9 +142,34 @@ const HomePage = () => {
     setFilteredLocations(filtered);
   }, [distance, category, keyword, locations]);
 
-  const handleAddFavorite = (locationId) => {
-    console.log("Add favorite for location:", locationId);
+  const handleAddFavorite = async (locationId) => {
+    try {
+      // Check if the location is already in the favorites array
+      const isFav = favLocation.includes(locationId);
+
+      // Update the favorites state
+      const updatedFavLocation = isFav
+        ? favLocation.filter((id) => id !== locationId) // Remove from favorites
+        : [...favLocation, locationId]; // Add to favorites
+
+      setFavLocation(updatedFavLocation);
+
+      // Send the request to the server (as earlier)
+      await axios.post(
+        `http://localhost:3000/favorites/${locationId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
   };
+
+  console.log(favLocation);
 
   const handleSort = () => {
     const sorted = [...filteredLocations].sort((a, b) => {
@@ -234,7 +278,7 @@ const HomePage = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => handleAddFavorite(location.id)}
+                      onClick={() => handleAddFavorite(location._id)}
                       sx={{
                         textTransform: "none",
                         backgroundColor: "white",
@@ -244,7 +288,9 @@ const HomePage = () => {
                         },
                       }}
                     >
-                      Add to Favorite
+                      {favLocation.includes(location._id)
+                        ? "Remove from Favorite"
+                        : "Add to Favorite"}
                     </Button>
                   </TableCell>
                 </TableRow>

@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ["user", "admin"], default: "user" },
   likedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
   registeredEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
+  favLocation: [{ type: mongoose.Schema.Types.ObjectId, ref: "Location" }],
 });
 
 userSchema.pre("save", async function (next) {
