@@ -19,8 +19,8 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
+import { useTheme } from "../contexts/ThemeContext";
 
 const HomePage = () => {
   const [locations, setLocations] = useState([]);
@@ -35,6 +35,8 @@ const HomePage = () => {
     longitude: null,
   });
 
+  const { theme } = useTheme(); // Access the current theme
+
   const fetchData = async () => {
     try {
       const [locationsResponse, eventsResponse] = await Promise.all([
@@ -43,18 +45,17 @@ const HomePage = () => {
       ]);
 
       const locations = locationsResponse.data;
-      const eventCountMap = eventsResponse.data;
+      const events = eventsResponse.data;
+
       const updatedLocations = locations.map((location) => ({
         ...location,
-        eventCount:
-          eventCountMap.filter((event) => event.venue === location._id)
-            .length || 0,
+        eventCount: events.filter((event) => event.venue === location._id).length || 0,
       }));
 
       setLocations(updatedLocations);
       setFilteredLocations(updatedLocations);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching data:", err);
     }
   };
 
@@ -62,7 +63,6 @@ const HomePage = () => {
     fetchData();
     fetchFavLocation();
 
-    // Get current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -99,15 +99,14 @@ const HomePage = () => {
 
   const haversineDistance = (lat1, lon1, lat2, lon2) => {
     const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // Radius of the Earth in kilometers
+    const R = 6371;
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
     const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLat / 2) ** 2 +
       Math.cos(toRad(lat1)) *
         Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+        Math.sin(dLon / 2) ** 2;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -183,19 +182,49 @@ const HomePage = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
-  return (
-    <div style={{ backgroundColor: "#F5F5F5" }}>
-      <Navbar />
+  const handleAddFavorite = (locationId) => {
+    console.log("Add favorite for location:", locationId);
+  };
 
+  return (
+    <div
+      style={{
+        backgroundColor: theme === "dark" ? "#121212" : "#F5F5F5",
+        color: theme === "dark" ? "#FFFFFF" : "#000000",
+        minHeight: "100vh",
+        margin: 0,
+        padding: 0,
+      }}
+    >
       <Container>
-        <div className="px-10 py-5 mt-10" style={{ backgroundColor: "white" }}>
-          <Typography variant="h5" gutterBottom>
+        <div
+          className="px-10 py-5 mt-10"
+          style={{
+            backgroundColor: theme === "dark" ? "#1E1E1E" : "white",
+            color: theme === "dark" ? "#FFFFFF" : "#000000",
+            borderRadius: "8px",
+          }}
+        >
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              color: theme === "dark" ? "#FFFFFF" : "#000000",
+            }}
+          >
             List of Locations
           </Typography>
           <hr />
           <div className="grid grid-cols-4 gap-10 items-center">
             <FormControl fullWidth margin="normal">
-              <Typography gutterBottom>Filter by Distance</Typography>
+              <Typography
+                gutterBottom
+                sx={{
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                }}
+              >
+                Filter by Distance
+              </Typography>
               <Slider
                 value={distance}
                 onChange={(e, newValue) => setDistance(newValue)}
@@ -203,18 +232,39 @@ const HomePage = () => {
                 valueLabelDisplay="auto"
                 min={0}
                 max={100}
+                sx={{
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                }}
               />
-              <Typography id="distance-slider" gutterBottom>
+              <Typography
+                id="distance-slider"
+                gutterBottom
+                sx={{
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                }}
+              >
                 {distance} km
               </Typography>
             </FormControl>
+
             <FormControl fullWidth margin="normal">
-              <Typography gutterBottom>Filter by Category</Typography>
+              <Typography
+                gutterBottom
+                sx={{
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                }}
+              >
+                Filter by Category
+              </Typography>
               <Select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 displayEmpty
                 inputProps={{ "aria-label": "Filter by Category" }}
+                sx={{
+                  color: theme === "dark" ? "#FFFFFF" : "#000000", // Text color
+                  backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF", // Grey for dark mode
+                }}
               >
                 <MenuItem value="">All Categories</MenuItem>
                 <MenuItem value="Auditorium">Auditorium</MenuItem>
@@ -230,57 +280,141 @@ const HomePage = () => {
                 <MenuItem value="Conference Room">Conference Room</MenuItem>
               </Select>
             </FormControl>
+
             <FormControl fullWidth margin="normal">
-              <Typography gutterBottom>Filter by Keyword</Typography>
+              <Typography
+                gutterBottom
+                sx={{
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                }}
+              >
+                Filter by Keyword
+              </Typography>
               <TextField
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon />
+                      <SearchIcon
+                        sx={{
+                          color: theme === "dark" ? "#FFFFFF" : "#000000", // Icon color
+                        }}
+                      />
                     </InputAdornment>
                   ),
+                  style: {
+                    color: theme === "dark" ? "#FFFFFF" : "#000000", // Text color
+                  },
+                }}
+                sx={{
+                  backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF", // Grey background for dark mode
                 }}
               />
             </FormControl>
           </div>
         </div>
-        <Paper className="mt-5">
+
+        <Paper
+          className="mt-5"
+          style={{
+            backgroundColor: theme === "dark" ? "#1E1E1E" : "white",
+            color: theme === "dark" ? "#FFFFFF" : "#000000",
+          }}
+        >
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  ID
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  Location
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
                   <TableSortLabel
                     active
                     direction={sortOrder}
                     onClick={handleSort}
+                    sx={{
+                      color: theme === "dark" ? "#FFFFFF" : "#000000",
+                      "&.Mui-active": {
+                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                      },
+                      "& .MuiTableSortLabel-icon": {
+                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                      },
+                    }}
                   >
                     Number of Events
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>Favorite</TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  Favorite
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredLocations.map((location) => (
                 <TableRow key={location.id}>
-                  <TableCell>{location.id}</TableCell>
+                  <TableCell
+                    sx={{
+                      color: theme === "dark" ? "#FFFFFF" : "#000000",
+                    }}
+                  >
+                    {location.id}
+                  </TableCell>
                   <TableCell>
-                    <Link to={`/locations/${location.id}`}>
+                    <Link
+                      to={`/locations/${location.id}`}
+                      style={{
+                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                      }}
+                    >
                       {location.name}
                     </Link>
                   </TableCell>
-                  <TableCell>{location.eventCount}</TableCell>
+                  <TableCell
+                    sx={{
+                      color: theme === "dark" ? "#FFFFFF" : "#000000",
+                    }}
+                  >
+                    {location.eventCount}
+                  </TableCell>
                   <TableCell>
                     <Button
                       variant="contained"
+                      onClick={() => handleAddFavorite(location.id)}
                       onClick={() => handleAddFavorite(location._id)}
                       color="warning"
                       sx={{
                         textTransform: "none",
+                        backgroundColor: theme === "dark" ? "#333333" : "white",
+                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                        "&:hover": {
+                          backgroundColor:
+                            theme === "dark" ? "#444444" : "#f0f0f0",
+                        },
                       }}
                     >
                       {favLocation.includes(location._id)
