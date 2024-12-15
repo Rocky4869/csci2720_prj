@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Container,
@@ -18,12 +18,14 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import Navbar from "../components/Navbar";
+//import Navbar from "../components/Navbar";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import { toast } from "react-toastify";
+import { useTheme } from "../contexts/ThemeContext"; // Import theme context for light/dark mode
 
 const EventPage = () => {
+  const { theme } = useTheme(); // Access the current theme (light or dark)
   const [events, setEvents] = useState([]);
   const [likedEvents, setLikedEvents] = useState({});
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -33,6 +35,7 @@ const EventPage = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  // Fetch events and related data
   const fetchData = async () => {
     try {
       const [locationsResponse, eventsResponse] = await Promise.all([
@@ -52,6 +55,7 @@ const EventPage = () => {
     }
   };
 
+  // Fetch liked events by the user
   const fetchLikedEvents = async () => {
     try {
       const response = await axios.get("http://localhost:3000/likes/events", {
@@ -69,6 +73,7 @@ const EventPage = () => {
     }
   };
 
+  // Fetch booked events by the user
   const fetchBookedEvents = async () => {
     try {
       const response = await axios.get(
@@ -89,6 +94,7 @@ const EventPage = () => {
     }
   };
 
+  // Handle pagination changes
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -98,6 +104,7 @@ const EventPage = () => {
     setPage(0);
   };
 
+  // Handle liking/unliking events
   const handleLike = async (eventId) => {
     try {
       const isLiked = likedEvents[eventId];
@@ -118,6 +125,7 @@ const EventPage = () => {
     }
   };
 
+  // Handle booking/canceling events
   const handleBook = async (eventId) => {
     try {
       const isBooked = bookedEvents[eventId];
@@ -144,6 +152,7 @@ const EventPage = () => {
     }
   };
 
+  // Filter events based on user input
   useEffect(() => {
     let filtered = events;
 
@@ -170,6 +179,7 @@ const EventPage = () => {
     setFilteredEvents(filtered);
   }, [filterLiked, filterPrice, events, likedEvents, bookedEvents]);
 
+  // Fetch data on component mount
   useEffect(() => {
     fetchData();
     fetchLikedEvents();
@@ -177,25 +187,71 @@ const EventPage = () => {
   }, []);
 
   return (
-    <div style={{ backgroundColor: "#F5F5F5" }}>
-      <Navbar />
+    <div
+      style={{
+        backgroundColor: theme === "dark" ? "#121212" : "#F5F5F5",
+        color: theme === "dark" ? "#FFFFFF" : "#000000",
+        minHeight: "100vh",
+      }}
+    >
 
       <Container>
         <div className="mt-10">
           <div className="flex flex-row gap-5 mb-5">
-            <FormControl fullWidth margin="normal">
+            {/* Dropdown Filter */}
+            <FormControl
+              fullWidth
+              margin="normal"
+              sx={{
+                backgroundColor: theme === "dark" ? "#424242" : "#F5F5F5",
+                borderRadius: "8px",
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                },
+                "& .MuiOutlinedInput-root": {
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  "& fieldset": {
+                    borderColor: theme === "dark" ? "#AAAAAA" : "#000000",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: theme === "dark" ? "#FFFFFF" : "#000000",
+                  },
+                },
+              }}
+            >
               <InputLabel>Filter by Events</InputLabel>
               <Select
                 value={filterLiked}
                 onChange={(e) => setFilterLiked(e.target.value)}
-                label="Filter by Liked Events"
+                label="Filter by Events"
               >
                 <MenuItem value="all">All Events</MenuItem>
                 <MenuItem value="liked">Liked Events</MenuItem>
                 <MenuItem value="booked">Booked Events</MenuItem>
               </Select>
             </FormControl>
-            <FormControl fullWidth margin="normal">
+
+            {/* Search Box (Price Filter) */}
+            <FormControl
+              fullWidth
+              margin="normal"
+              sx={{
+                backgroundColor: theme === "dark" ? "#424242" : "#F5F5F5",
+                borderRadius: "8px",
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                },
+                "& .MuiOutlinedInput-root": {
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  "& fieldset": {
+                    borderColor: theme === "dark" ? "#AAAAAA" : "#000000",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: theme === "dark" ? "#FFFFFF" : "#000000",
+                  },
+                },
+              }}
+            >
               <TextField
                 label="Filter by Price (under)"
                 type="number"
@@ -206,19 +262,26 @@ const EventPage = () => {
               />
             </FormControl>
           </div>
-          <TableContainer component={Paper}>
+
+          {/* Table of Events */}
+          <TableContainer
+            component={Paper}
+            sx={{
+              backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF",
+            }}
+          >
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Venue</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Date/Time</TableCell>
-                  <TableCell>Presenter</TableCell>
-                  <TableCell>Price</TableCell>
-                  <TableCell>Like</TableCell>
-                  <TableCell>Book</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>ID</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Title</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Venue</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Description</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Date/Time</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Presenter</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Price</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Like</TableCell>
+                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Book</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -226,21 +289,19 @@ const EventPage = () => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((event) => (
                     <TableRow key={event._id}>
-                      <TableCell>{event.eventId}</TableCell>
-                      <TableCell>{event.title}</TableCell>
-                      <TableCell>{event.venue}</TableCell>
-                      <TableCell>{event.description}</TableCell>
-                      <TableCell>{event.dateTime}</TableCell>
-                      <TableCell>
-                        {event.presenter.split("Presented by")[1]}
-                      </TableCell>
-                      <TableCell>{event.price}</TableCell>
+                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.eventId}</TableCell>
+                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.title}</TableCell>
+                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.venue}</TableCell>
+                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.description}</TableCell>
+                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.dateTime}</TableCell>
+                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.presenter.split("Presented by")[1]}</TableCell>
+                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.price}</TableCell>
                       <TableCell>
                         <IconButton onClick={() => handleLike(event._id)}>
                           {likedEvents[event._id] ? (
-                            <ThumbUpAltIcon />
+                            <ThumbUpAltIcon sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }} />
                           ) : (
-                            <ThumbUpOffAltIcon />
+                            <ThumbUpOffAltIcon sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }} />
                           )}
                         </IconButton>
                       </TableCell>
@@ -250,6 +311,7 @@ const EventPage = () => {
                           color="warning"
                           sx={{
                             textTransform: "none",
+                            color: theme === "dark" ? "#FFFFFF" : "#000000",
                           }}
                           onClick={() => handleBook(event._id)}
                         >
@@ -268,6 +330,9 @@ const EventPage = () => {
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+              }}
             />
           </TableContainer>
         </div>

@@ -13,7 +13,8 @@ import {
   TextField,
   Grid,
 } from "@mui/material";
-import Navbar from "../components/Navbar";
+//import Navbar from "../components/Navbar";
+import { useTheme } from "../contexts/ThemeContext"; // Import theme context
 
 const SingleLocationPage = () => {
   const { id } = useParams(); // Get location ID from the URL
@@ -23,6 +24,8 @@ const SingleLocationPage = () => {
   const [isFavorite, setIsFavorite] = useState(false); // Favorite status
   const [error, setError] = useState(""); // Error message for comment submission
   const [username, setUsername] = useState(""); // Logged-in username
+
+  const { theme } = useTheme(); // Access the current theme
 
   // Function to decode token and extract the username
   const decodeToken = (token) => {
@@ -148,16 +151,33 @@ const SingleLocationPage = () => {
   }
 
   return (
-    <div style={{ backgroundColor: "#F5F5F5" }}>
-      <Navbar />
+    <div
+      style={{
+        backgroundColor: theme === "dark" ? "#121212" : "#F5F5F5",
+        color: theme === "dark" ? "#FFFFFF" : "#000000",
+        minHeight: "100vh",
+      }}
+    >
 
       <Container sx={{ py: 4 }}>
         {/* Location Title Section */}
-        <Paper sx={{ p: 3, mb: 3 }}>
+        <Paper
+          sx={{
+            p: 3,
+            mb: 3,
+            backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF",
+            color: theme === "dark" ? "#FFFFFF" : "#000000",
+          }}
+        >
           <Typography variant="h5" gutterBottom>
             {location.name}
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
+          <Typography
+            variant="subtitle1"
+            sx={{
+              color: theme === "dark" ? "#B0B0B0" : "#6C6C6C",
+            }}
+          >
             Latitude: {location.latitude}, Longitude: {location.longitude}
           </Typography>
 
@@ -168,13 +188,10 @@ const SingleLocationPage = () => {
             sx={{
               mt: 2,
               textTransform: "none",
-              backgroundColor: "#FFFFFF",
-              color: "#000000",
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-              borderRadius: "8px",
+              backgroundColor: theme === "dark" ? "#555555" : "#FFFFFF",
+              color: theme === "dark" ? "#FFFFFF" : "#000000",
               "&:hover": {
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
-                backgroundColor: "#f9f9f9",
+                backgroundColor: theme === "dark" ? "#666666" : "#F0F0F0",
               },
             }}
           >
@@ -185,7 +202,14 @@ const SingleLocationPage = () => {
         <Grid container spacing={3}>
           {/* Map Section */}
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 3, minHeight: "450px" }}>
+            <Paper
+              sx={{
+                p: 3,
+                minHeight: "450px",
+                backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF",
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 Location Map
               </Typography>
@@ -205,7 +229,14 @@ const SingleLocationPage = () => {
 
           {/* Comments Section */}
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 3, minHeight: "450px" }}>
+            <Paper
+              sx={{
+                p: 3,
+                minHeight: "450px",
+                backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF",
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 Comments
               </Typography>
@@ -214,19 +245,52 @@ const SingleLocationPage = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>#</TableCell>
-                    <TableCell>Username</TableCell>
-                    <TableCell>Comment</TableCell>
+                    <TableCell
+                      sx={{
+                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                      }}
+                    >
+                      #
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                      }}
+                    >
+                      Username
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                      }}
+                    >
+                      Comment
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {comments.length > 0 ? (
                     comments.map((comment, index) => (
                       <TableRow key={comment._id || index}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>{comment.username}</TableCell>
-                        {/* Render newlines as <br /> */}
-                        <TableCell>
+                        <TableCell
+                          sx={{
+                            color: theme === "dark" ? "#FFFFFF" : "#000000",
+                          }}
+                        >
+                          {index + 1}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: theme === "dark" ? "#FFFFFF" : "#000000",
+                          }}
+                        >
+                          {comment.username}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: theme === "dark" ? "#FFFFFF" : "#000000",
+                          }}
+                        >
                           {comment.text.split("\n").map((line, i) => (
                             <span key={i}>
                               {line}
@@ -238,7 +302,13 @@ const SingleLocationPage = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={3} align="center">
+                      <TableCell
+                        colSpan={3}
+                        align="center"
+                        sx={{
+                          color: theme === "dark" ? "#FFFFFF" : "#000000",
+                        }}
+                      >
                         No Comments
                       </TableCell>
                     </TableRow>
@@ -261,7 +331,13 @@ const SingleLocationPage = () => {
                 fullWidth
                 multiline
                 rows={3}
-                sx={{ mt: 2 }}
+                sx={{
+                  mt: 2,
+                  backgroundColor: theme === "dark" ? "#555555" : "#FFFFFF",
+                  "& .MuiInputBase-root": {
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  },
+                }}
               />
               <Button
                 variant="contained"
@@ -269,13 +345,10 @@ const SingleLocationPage = () => {
                 sx={{
                   mt: 2,
                   textTransform: "none",
-                  backgroundColor: "#FFFFFF",
-                  color: "#000000",
-                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-                  borderRadius: "8px",
+                  backgroundColor: theme === "dark" ? "#555555" : "#FFFFFF",
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
                   "&:hover": {
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
-                    backgroundColor: "#f9f9f9",
+                    backgroundColor: theme === "dark" ? "#666666" : "#F0F0F0",
                   },
                 }}
               >

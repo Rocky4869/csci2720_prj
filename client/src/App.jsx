@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+import Navbar from "./components/Navbar";
 import "./App.css";
 import AdminPage from "./pages/AdminPage";
 import HomePage from "./pages/HomePage";
@@ -13,12 +15,39 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
+// Wrapper Component for Dynamic Styling
+const AppContainer = ({ children }) => {
+  const { theme } = useTheme(); // Access the current theme (light or dark)
+  const backgroundColor = theme === "dark" ? "#121212" : "#F5F5F5"; // Dark or light background
+
+  return (
+    <div
+      className="App"
+      style={{
+        margin: 0,
+        padding: 0,
+        minHeight: "100vh",
+        backgroundColor: backgroundColor, // Dynamic background color
+        color: theme === "dark" ? "#FFFFFF" : "#000000", // Adjust text color
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <div>
-          <ToastContainer position="bottom-right" />
+    <ThemeProvider>
+      <Router>
+        <AppContainer>
+          {/* Navbar */}
+          <Navbar />
+
+          {/* Toast Notifications */}
+          <ToastContainer />
+
+          {/* Routes */}
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -31,9 +60,9 @@ function App() {
             <Route path="/map" element={<MapPage />} />
             <Route path="*" element={<LoginPage />} />
           </Routes>
-        </div>
-      </div>
-    </Router>
+        </AppContainer>
+      </Router>
+    </ThemeProvider>
   );
 }
 
