@@ -45,7 +45,7 @@ const AdminUserPage = () => {
       toast.error("Failed to fetch users");
     }
   };
-  
+
   const handleOpen = (user = null) => {
     if (user) {
       setSelectedUser(user);
@@ -231,7 +231,11 @@ const AdminUserPage = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleSubmit} variant="contained" color="primary">
+              <Button
+                onClick={handleSubmit}
+                variant="contained"
+                color="primary"
+              >
                 {selectedUser ? "Update" : "Create"}
               </Button>
             </DialogActions>

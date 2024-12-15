@@ -49,9 +49,11 @@ const AdminPage = () => {
 
       const locations = locationsResponse.data;
       const events = eventsResponse.data;
+      console.log(events);
       const updatedEvents = events.map((event) => ({
         ...event,
-        venueName: locations.find((location) => location._id === event.venue)?.name,
+        venueName: locations.find((location) => location._id === event.venue)
+          ?.name,
       }));
 
       setLocations(locations);
@@ -96,7 +98,7 @@ const AdminPage = () => {
     try {
       if (selectedEvent) {
         await axios.put(
-          `http://localhost:3000/events/${selectedEvent._id}`,
+          `http://localhost:3000/events/${selectedEvent.eventId}`,
           formData,
           {
             headers: {
@@ -120,6 +122,8 @@ const AdminPage = () => {
       toast.error("Operation failed. Please try again.");
     }
   };
+
+  console.log(selectedEvent);
 
   const handleDelete = async (eventId) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
@@ -203,7 +207,7 @@ const AdminPage = () => {
                         <Button
                           variant="contained"
                           color="error"
-                          onClick={() => handleDelete(event._id)}
+                          onClick={() => handleDelete(event.eventId)}
                         >
                           Delete
                         </Button>
@@ -294,7 +298,11 @@ const AdminPage = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleSubmit} variant="contained" color="primary">
+              <Button
+                onClick={handleSubmit}
+                variant="contained"
+                color="primary"
+              >
                 {selectedEvent ? "Update" : "Create"}
               </Button>
             </DialogActions>
