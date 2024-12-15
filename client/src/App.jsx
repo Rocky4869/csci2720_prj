@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import AdminPage from "./pages/AdminPage";
+import AdminUserPage from "./pages/AdminUserPage";
 import HomePage from "./pages/HomePage";
 import FavoritePage from "./pages/FavoritePage";
 import LoginPage from "./pages/LoginPage";
@@ -25,6 +26,7 @@ function App() {
             <Route path="/event" element={<EventPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin-user" element={<AdminUserPage />} />
             <Route path="/favorites" element={<FavoritePage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/locations/:id" element={<SingleLocationPage />} />
