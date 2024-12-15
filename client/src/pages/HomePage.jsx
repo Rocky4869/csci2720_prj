@@ -21,6 +21,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import Navbar from "../components/Navbar";
 
 const HomePage = () => {
   const [locations, setLocations] = useState([]);
@@ -191,6 +192,7 @@ const HomePage = () => {
         padding: 0,
       }}
     >
+      <Navbar />
       <Container>
         <div
           className="px-10 py-5 mt-10"

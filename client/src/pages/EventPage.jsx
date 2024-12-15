@@ -18,7 +18,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-//import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import { toast } from "react-toastify";
@@ -194,7 +194,7 @@ const EventPage = () => {
         minHeight: "100vh",
       }}
     >
-
+      <Navbar />
       <Container>
         <div className="mt-10">
           <div className="flex flex-row gap-5 mb-5">
@@ -273,15 +273,51 @@ const EventPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>ID</TableCell>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Title</TableCell>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Venue</TableCell>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Description</TableCell>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Date/Time</TableCell>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Presenter</TableCell>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Price</TableCell>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Like</TableCell>
-                  <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Book</TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    ID
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    Title
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    Venue
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    Description
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    Date/Time
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    Presenter
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    Price
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    Like
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                  >
+                    Book
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -289,19 +325,55 @@ const EventPage = () => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((event) => (
                     <TableRow key={event._id}>
-                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.eventId}</TableCell>
-                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.title}</TableCell>
-                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.venue}</TableCell>
-                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.description}</TableCell>
-                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.dateTime}</TableCell>
-                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.presenter.split("Presented by")[1]}</TableCell>
-                      <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{event.price}</TableCell>
+                      <TableCell
+                        sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                      >
+                        {event.eventId}
+                      </TableCell>
+                      <TableCell
+                        sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                      >
+                        {event.title}
+                      </TableCell>
+                      <TableCell
+                        sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                      >
+                        {event.venue}
+                      </TableCell>
+                      <TableCell
+                        sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                      >
+                        {event.description}
+                      </TableCell>
+                      <TableCell
+                        sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                      >
+                        {event.dateTime}
+                      </TableCell>
+                      <TableCell
+                        sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                      >
+                        {event.presenter.split("Presented by")[1]}
+                      </TableCell>
+                      <TableCell
+                        sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                      >
+                        {event.price}
+                      </TableCell>
                       <TableCell>
                         <IconButton onClick={() => handleLike(event._id)}>
                           {likedEvents[event._id] ? (
-                            <ThumbUpAltIcon sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }} />
+                            <ThumbUpAltIcon
+                              sx={{
+                                color: theme === "dark" ? "#FFFFFF" : "#000000",
+                              }}
+                            />
                           ) : (
-                            <ThumbUpOffAltIcon sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }} />
+                            <ThumbUpOffAltIcon
+                              sx={{
+                                color: theme === "dark" ? "#FFFFFF" : "#000000",
+                              }}
+                            />
                           )}
                         </IconButton>
                       </TableCell>
@@ -311,7 +383,7 @@ const EventPage = () => {
                           color="warning"
                           sx={{
                             textTransform: "none",
-                            color: theme === "dark" ? "#FFFFFF" : "#000000",
+                            color: theme === "dark" ? "#FFFFFF" : "white",
                           }}
                           onClick={() => handleBook(event._id)}
                         >

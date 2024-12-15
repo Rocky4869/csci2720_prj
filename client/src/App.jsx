@@ -43,7 +43,7 @@ function App() {
       <Router>
         <AppContainer>
           {/* Navbar */}
-          <Navbar />
+          {/* <Navbar /> */}
 
           {/* Toast Notifications */}
           <ToastContainer />

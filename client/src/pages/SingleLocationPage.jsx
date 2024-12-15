@@ -13,7 +13,7 @@ import {
   TextField,
   Grid,
 } from "@mui/material";
-//import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar";
 import { useTheme } from "../contexts/ThemeContext"; // Import theme context
 
 const SingleLocationPage = () => {
@@ -158,7 +158,7 @@ const SingleLocationPage = () => {
         minHeight: "100vh",
       }}
     >
-
+      <Navbar />
       <Container sx={{ py: 4 }}>
         {/* Location Title Section */}
         <Paper
