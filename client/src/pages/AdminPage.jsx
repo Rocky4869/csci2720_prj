@@ -1,3 +1,5 @@
+// ..pages/AdminPage.jsx
+
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -31,6 +33,8 @@ const AdminPage = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterVenue, setFilterVenue] = useState("all");
   const [formData, setFormData] = useState({
     title: "",
     dateTime: "",
@@ -151,6 +155,13 @@ const AdminPage = () => {
     setPage(0);
   };
 
+  const filteredEvents = events.filter((event) => {
+    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesVenue = filterVenue === "all" || event.venue === filterVenue;
+    return matchesSearch && matchesVenue;
+  });
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -169,6 +180,32 @@ const AdminPage = () => {
             Create New Event
           </Button>
 
+          <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+            <TextField
+              label="Search Events"
+              variant="outlined"
+              size="small"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{ flexGrow: 1 }}
+            />
+            <FormControl size="small" sx={{ minWidth: 200 }}>
+              <InputLabel>Filter by Venue</InputLabel>
+              <Select
+                value={filterVenue}
+                onChange={(e) => setFilterVenue(e.target.value)}
+                label="Filter by Venue"
+              >
+                <MenuItem value="all">All Venues</MenuItem>
+                {locations.map((location) => (
+                  <MenuItem key={location._id} value={location._id}>
+                    {location.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -184,7 +221,7 @@ const AdminPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {events
+                {filteredEvents
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((event) => (
                     <TableRow key={event._id}>
@@ -196,21 +233,22 @@ const AdminPage = () => {
                       <TableCell>{event.presenter}</TableCell>
                       <TableCell>{event.price}</TableCell>
                       <TableCell>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleOpen(event)}
-                          sx={{ marginRight: 1 }}
-                        >
-                          Update
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          onClick={() => handleDelete(event.eventId)}
-                        >
-                          Delete
-                        </Button>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleOpen(event)}
+                          >
+                            Update
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="error"
+                            onClick={() => handleDelete(event.eventId)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
