@@ -324,7 +324,15 @@ const EventPage = () => {
                 {filteredEvents
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((event) => (
-                    <TableRow key={event._id}>
+                    <TableRow
+                      key={event._id}
+                      sx={{
+            
+                        "&:hover": {
+                          backgroundColor: theme === "dark" ? "#444444" : "#F0F0F0", // Hover effect color
+                        },
+                      }}
+                    >
                       <TableCell
                         sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
                       >

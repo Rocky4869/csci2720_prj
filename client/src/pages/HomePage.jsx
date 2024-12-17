@@ -19,6 +19,8 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess"; // Icons for toggle button
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import Navbar from "../components/Navbar";
@@ -31,6 +33,7 @@ const HomePage = () => {
   const [category, setCategory] = useState("");
   const [keyword, setKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [showFilters, setShowFilters] = useState(false); // State to toggle filters
   const [currentLocation, setCurrentLocation] = useState({
     latitude: null,
     longitude: null,
@@ -143,17 +146,14 @@ const HomePage = () => {
 
   const handleAddFavorite = async (locationId) => {
     try {
-      // Check if the location is already in the favorites array
       const isFav = favLocation.includes(locationId);
 
-      // Update the favorites state
       const updatedFavLocation = isFav
-        ? favLocation.filter((id) => id !== locationId) // Remove from favorites
-        : [...favLocation, locationId]; // Add to favorites
+        ? favLocation.filter((id) => id !== locationId)
+        : [...favLocation, locationId];
 
       setFavLocation(updatedFavLocation);
 
-      // Send the request to the server (as earlier)
       await axios.post(
         `http://localhost:3000/favorites/${locationId}`,
         {},
@@ -167,8 +167,6 @@ const HomePage = () => {
       console.error(err);
     }
   };
-
-  console.log(favLocation);
 
   const handleSort = () => {
     const sorted = [...filteredLocations].sort((a, b) => {
@@ -188,8 +186,6 @@ const HomePage = () => {
         backgroundColor: theme === "dark" ? "#121212" : "#F5F5F5",
         color: theme === "dark" ? "#FFFFFF" : "#000000",
         minHeight: "100vh",
-        margin: 0,
-        padding: 0,
       }}
     >
       <Navbar />
@@ -202,114 +198,141 @@ const HomePage = () => {
             borderRadius: "8px",
           }}
         >
-          <Typography
-            variant="h5"
-            gutterBottom
-            sx={{
-              color: theme === "dark" ? "#FFFFFF" : "#000000",
-            }}
-          >
-            List of Locations
-          </Typography>
-          <hr />
-          <div className="grid grid-cols-4 gap-10 items-center">
-            <FormControl fullWidth margin="normal">
-              <Typography
-                gutterBottom
-                sx={{
-                  color: theme === "dark" ? "#FFFFFF" : "#000000",
-                }}
-              >
-                Filter by Distance
-              </Typography>
-              <Slider
-                value={distance}
-                onChange={(e, newValue) => setDistance(newValue)}
-                aria-labelledby="distance-slider"
-                valueLabelDisplay="auto"
-                min={0}
-                max={100}
-                sx={{
-                  color: theme === "dark" ? "#FFFFFF" : "#000000",
-                }}
-              />
-              <Typography
-                id="distance-slider"
-                gutterBottom
-                sx={{
-                  color: theme === "dark" ? "#FFFFFF" : "#000000",
-                }}
-              >
-                {distance} km
-              </Typography>
-            </FormControl>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+              }}
+            >
+              List of Locations
+            </Typography>
 
-            <FormControl fullWidth margin="normal">
-              <Typography
-                gutterBottom
-                sx={{
-                  color: theme === "dark" ? "#FFFFFF" : "#000000",
-                }}
-              >
-                Filter by Category
-              </Typography>
-              <Select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                displayEmpty
-                inputProps={{ "aria-label": "Filter by Category" }}
-                sx={{
-                  color: theme === "dark" ? "#FFFFFF" : "#000000", // Text color
-                  backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF", // Grey for dark mode
-                }}
-              >
-                <MenuItem value="">All Categories</MenuItem>
-                <MenuItem value="Auditorium">Auditorium</MenuItem>
-                <MenuItem value="Function Room">Function Room</MenuItem>
-                <MenuItem value="Cultural Activities Hall">
-                  Cultural Activities Hall
-                </MenuItem>
-                <MenuItem value="Exhibition Gallery">
-                  Exhibition Gallery
-                </MenuItem>
-                <MenuItem value="Dance Studio">Dance Studio</MenuItem>
-                <MenuItem value="Lecture Room">Lecture Room</MenuItem>
-                <MenuItem value="Conference Room">Conference Room</MenuItem>
-              </Select>
-            </FormControl>
-
-            <FormControl fullWidth margin="normal">
-              <Typography
-                gutterBottom
-                sx={{
-                  color: theme === "dark" ? "#FFFFFF" : "#000000",
-                }}
-              >
-                Filter by Keyword
-              </Typography>
-              <TextField
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon
-                        sx={{
-                          color: theme === "dark" ? "#FFFFFF" : "#000000", // Icon color
-                        }}
-                      />
-                    </InputAdornment>
-                  ),
-                  style: {
-                    color: theme === "dark" ? "#FFFFFF" : "#000000", // Text color
-                  },
-                }}
-                sx={{
-                  backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF", // Grey background for dark mode
-                }}
-              />
-            </FormControl>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                color: theme === "dark" ? "#B0B0B0" : "#6C6C6C",
+                mb: 1, // Adds some margin below the text
+              }}
+            >
+              Browse through the list of venues below. Use the filters to refine your search and find venues based on your preferences.
+            </Typography>
           </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              variant="text"
+              sx={{
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+              }}
+              startIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            >
+              {showFilters ? "Hide Filters" : "Show Filters"}
+            </Button>
+          </div>
+          <hr />
+          {showFilters && ( // Conditionally render the filters
+            <div className="grid grid-cols-4 gap-10 items-center">
+              <FormControl fullWidth margin="normal">
+                <Typography
+                  gutterBottom
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  Filter by Distance
+                </Typography>
+                <Slider
+                  value={distance}
+                  onChange={(e, newValue) => setDistance(newValue)}
+                  aria-labelledby="distance-slider"
+                  valueLabelDisplay="auto"
+                  min={0}
+                  max={100}
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                />
+                <Typography
+                  id="distance-slider"
+                  gutterBottom
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  {distance} km
+                </Typography>
+              </FormControl>
+
+              <FormControl fullWidth margin="normal">
+                <Typography
+                  gutterBottom
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  Filter by Category
+                </Typography>
+                <Select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Filter by Category" }}
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                    backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF",
+                  }}
+                >
+                  <MenuItem value="">All Categories</MenuItem>
+                  <MenuItem value="Auditorium">Auditorium</MenuItem>
+                  <MenuItem value="Function Room">Function Room</MenuItem>
+                  <MenuItem value="Cultural Activities Hall">
+                    Cultural Activities Hall
+                  </MenuItem>
+                  <MenuItem value="Exhibition Gallery">
+                    Exhibition Gallery
+                  </MenuItem>
+                  <MenuItem value="Dance Studio">Dance Studio</MenuItem>
+                  <MenuItem value="Lecture Room">Lecture Room</MenuItem>
+                  <MenuItem value="Conference Room">Conference Room</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth margin="normal">
+                <Typography
+                  gutterBottom
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  Filter by Keyword
+                </Typography>
+                <TextField
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon
+                          sx={{
+                            color: theme === "dark" ? "#FFFFFF" : "#000000",
+                          }}
+                        />
+                      </InputAdornment>
+                    ),
+                    style: {
+                      color: theme === "dark" ? "#FFFFFF" : "#000000",
+                    },
+                  }}
+                  sx={{
+                    backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF",
+                  }}
+                />
+              </FormControl>
+            </div>
+          )}
         </div>
 
         <Paper
@@ -373,7 +396,14 @@ const HomePage = () => {
             </TableHead>
             <TableBody>
               {filteredLocations.map((location) => (
-                <TableRow key={location.id}>
+                <TableRow
+                  key={location.id}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: theme === "dark" ? "#333333" : "#f0f0f0",
+                    },
+                  }}
+                >
                   <TableCell
                     sx={{
                       color: theme === "dark" ? "#FFFFFF" : "#000000",
@@ -385,7 +415,7 @@ const HomePage = () => {
                     <Link
                       to={`/locations/${location.id}`}
                       style={{
-                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                        color: "#007BFF",
                       }}
                     >
                       {location.name}
