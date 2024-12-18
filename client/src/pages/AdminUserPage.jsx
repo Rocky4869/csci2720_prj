@@ -172,14 +172,8 @@ const AdminUserPage = () => {
   };
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = roleFilter === "all" ? true : user.role === roleFilter;
-    return matchesSearch && matchesRole;
-  });
-
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchesSearch =
+      user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = roleFilter === "all" ? true : user.role === roleFilter;
     return matchesSearch && matchesRole;
@@ -217,7 +211,8 @@ const AdminUserPage = () => {
               color: theme === "dark" ? "#B0B0B0" : "#6C6C6C",
             }}
           >
-            Manage users in the system. You can create, update, and delete users, as well as view their roles and email addresses.
+            Manage users in the system. You can create, update, and delete
+            users, as well as view their roles and email addresses.
           </Typography>
         </Paper>
 
@@ -238,7 +233,16 @@ const AdminUserPage = () => {
           Create New User
         </Button>
 
-          <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+        <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{
+              flexGrow: 1,
+              backgroundColor: theme === "dark" ? "#424242" : "#F5F5F5",
+              borderRadius: "8px",
+            }}
+          >
             <TextField
               label="Search Users"
               variant="outlined"
@@ -247,19 +251,40 @@ const AdminUserPage = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               sx={{ flexGrow: 1 }}
             />
-            <FormControl variant="outlined" size="small" style={{ minWidth: 200 }}>
-              <InputLabel>Role Filter</InputLabel>
-              <Select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                label="Role Filter"
-              >
-                <MenuItem value="all">All Roles</MenuItem>
-                <MenuItem value="user">User</MenuItem>
-                <MenuItem value="admin">Admin</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
+          </FormControl>
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{
+              minWidth: 200,
+              backgroundColor: theme === "dark" ? "#424242" : "#F5F5F5",
+              borderRadius: "8px",
+              "& .MuiInputLabel-root": {
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+              },
+              "& .MuiOutlinedInput-root": {
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+                "& fieldset": {
+                  borderColor: theme === "dark" ? "#AAAAAA" : "#000000",
+                },
+                "&:hover fieldset": {
+                  borderColor: theme === "dark" ? "#FFFFFF" : "#000000",
+                },
+              },
+            }}
+          >
+            <InputLabel>Role Filter</InputLabel>
+            <Select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              label="Role Filter"
+            >
+              <MenuItem value="all">All Roles</MenuItem>
+              <MenuItem value="user">User</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
 
         <TableContainer
           component={Paper}
@@ -275,10 +300,26 @@ const AdminUserPage = () => {
                   backgroundColor: theme === "dark" ? "#333333" : "#F0F0F0",
                 }}
               >
-                <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Username</TableCell>
-                <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Email</TableCell>
-                <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Role</TableCell>
-                <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>Actions</TableCell>
+                <TableCell
+                  sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                >
+                  Username
+                </TableCell>
+                <TableCell
+                  sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                >
+                  Email
+                </TableCell>
+                <TableCell
+                  sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                >
+                  Role
+                </TableCell>
+                <TableCell
+                  sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                >
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -288,17 +329,28 @@ const AdminUserPage = () => {
                   <TableRow
                     key={user._id}
                     sx={{
-                      backgroundColor:
-                        theme === "dark" ? "#222222" : "#FFFFFF",
+                      backgroundColor: theme === "dark" ? "#222222" : "#FFFFFF",
                       "&:hover": {
                         backgroundColor:
                           theme === "dark" ? "#333333" : "#F9F9F9",
                       },
                     }}
                   >
-                    <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{user.username}</TableCell>
-                    <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{user.email}</TableCell>
-                    <TableCell sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}>{user.role}</TableCell>
+                    <TableCell
+                      sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                    >
+                      {user.username}
+                    </TableCell>
+                    <TableCell
+                      sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                    >
+                      {user.email}
+                    </TableCell>
+                    <TableCell
+                      sx={{ color: theme === "dark" ? "#FFFFFF" : "#000000" }}
+                    >
+                      {user.role}
+                    </TableCell>
                     <TableCell>
                       <div style={{ display: "flex", gap: "10px" }}>
                         <Button
@@ -308,7 +360,8 @@ const AdminUserPage = () => {
                             textTransform: "none",
                             fontWeight: 500,
                             color: theme === "dark" ? "#FFFFFF" : "#000000",
-                            borderColor: theme === "dark" ? "#FFFFFF" : "#000000",
+                            borderColor:
+                              theme === "dark" ? "#FFFFFF" : "#000000",
                           }}
                         >
                           Update
@@ -320,7 +373,8 @@ const AdminUserPage = () => {
                             textTransform: "none",
                             fontWeight: 500,
                             color: theme === "dark" ? "#FF6B6B" : "#D32F2F",
-                            borderColor: theme === "dark" ? "#FF6B6B" : "#D32F2F",
+                            borderColor:
+                              theme === "dark" ? "#FF6B6B" : "#D32F2F",
                           }}
                         >
                           Delete

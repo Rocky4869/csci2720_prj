@@ -158,7 +158,8 @@ const AdminPage = () => {
   };
 
   const filteredEvents = events.filter((event) => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesVenue = filterVenue === "all" || event.venue === filterVenue;
     return matchesSearch && matchesVenue;
@@ -219,7 +220,22 @@ const AdminPage = () => {
           Create New Event
         </Button>
 
-          <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "20px",
+            marginBottom: "20px",
+          }}
+        >
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{
+              flexGrow: 1,
+              backgroundColor: theme === "dark" ? "#424242" : "#F5F5F5",
+              borderRadius: "8px",
+            }}
+          >
             <TextField
               label="Search Events"
               variant="outlined"
@@ -228,22 +244,43 @@ const AdminPage = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               sx={{ flexGrow: 1 }}
             />
-            <FormControl size="small" sx={{ minWidth: 200 }}>
-              <InputLabel>Filter by Venue</InputLabel>
-              <Select
-                value={filterVenue}
-                onChange={(e) => setFilterVenue(e.target.value)}
-                label="Filter by Venue"
-              >
-                <MenuItem value="all">All Venues</MenuItem>
-                {locations.map((location) => (
-                  <MenuItem key={location._id} value={location._id}>
-                    {location.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
+          </FormControl>
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{
+              minWidth: 200,
+              backgroundColor: theme === "dark" ? "#424242" : "#F5F5F5",
+              borderRadius: "8px",
+              "& .MuiInputLabel-root": {
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+              },
+              "& .MuiOutlinedInput-root": {
+                color: theme === "dark" ? "#FFFFFF" : "#000000",
+                "& fieldset": {
+                  borderColor: theme === "dark" ? "#AAAAAA" : "#000000",
+                },
+                "&:hover fieldset": {
+                  borderColor: theme === "dark" ? "#FFFFFF" : "#000000",
+                },
+              },
+            }}
+          >
+            <InputLabel>Filter by Venue</InputLabel>
+            <Select
+              value={filterVenue}
+              onChange={(e) => setFilterVenue(e.target.value)}
+              label="Filter by Venue"
+            >
+              <MenuItem value="all">All Venues</MenuItem>
+              {locations.map((location) => (
+                <MenuItem key={location._id} value={location._id}>
+                  {location.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
 
         {/* Event Table */}
         <TableContainer
@@ -330,7 +367,7 @@ const AdminPage = () => {
 
             {/* Table Body */}
             <TableBody>
-              {events
+              {filteredEvents
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((event) => (
                   <TableRow
@@ -338,7 +375,8 @@ const AdminPage = () => {
                     sx={{
                       backgroundColor: theme === "dark" ? "#222222" : "#FFFFFF",
                       "&:hover": {
-                        backgroundColor: theme === "dark" ? "#333333" : "#F9F9F9",
+                        backgroundColor:
+                          theme === "dark" ? "#333333" : "#F9F9F9",
                       },
                     }}
                   >
@@ -401,7 +439,8 @@ const AdminPage = () => {
                           color: theme === "dark" ? "#FFFFFF" : "#000000",
                           borderColor: theme === "dark" ? "#FFFFFF" : "#000000",
                           "&:hover": {
-                            backgroundColor: theme === "dark" ? "#333333" : "#F0F0F0",
+                            backgroundColor:
+                              theme === "dark" ? "#333333" : "#F0F0F0",
                           },
                         }}
                       >
@@ -417,7 +456,8 @@ const AdminPage = () => {
                           color: theme === "dark" ? "#FF6B6B" : "#D32F2F",
                           borderColor: theme === "dark" ? "#FF6B6B" : "#D32F2F",
                           "&:hover": {
-                            backgroundColor: theme === "dark" ? "#333333" : "#FFEBEE",
+                            backgroundColor:
+                              theme === "dark" ? "#333333" : "#FFEBEE",
                           },
                         }}
                       >
@@ -515,11 +555,7 @@ const AdminPage = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button
-              onClick={handleSubmit}
-              variant="contained"
-              color="primary"
-            >
+            <Button onClick={handleSubmit} variant="contained" color="primary">
               {selectedEvent ? "Update" : "Create"}
             </Button>
           </DialogActions>
