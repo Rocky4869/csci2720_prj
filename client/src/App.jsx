@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
-import Navbar from "./components/Navbar";
 import "./App.css";
 import AdminPage from "./pages/AdminPage";
 import AdminUserPage from "./pages/AdminUserPage";
@@ -12,7 +11,6 @@ import SingleLocationPage from "./pages/SingleLocationPage";
 import MapPage from "./pages/MapPage";
 import RegisterPage from "./pages/RegisterPage";
 import EventPage from "./pages/EventPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
@@ -51,7 +49,6 @@ function App() {
           {/* Routes */}
           <Routes>
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/event" element={<EventPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/admin" element={<AdminPage />} />

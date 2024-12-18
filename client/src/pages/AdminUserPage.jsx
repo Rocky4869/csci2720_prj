@@ -190,6 +190,7 @@ const AdminUserPage = () => {
         backgroundColor: theme === "dark" ? "#121212" : "#F5F5F5",
         color: theme === "dark" ? "#FFFFFF" : "#000000",
         minHeight: "100vh",
+        paddingBottom: "50px",
       }}
     >
       <AdminNavbar />
@@ -249,7 +250,21 @@ const AdminUserPage = () => {
               size="small"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{ flexGrow: 1 }}
+              sx={{
+                flexGrow: 1,
+                "& .MuiInputLabel-root": {
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                },
+                "& .MuiOutlinedInput-root": {
+                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  "& fieldset": {
+                    borderColor: theme === "dark" ? "#AAAAAA" : "#000000",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: theme === "dark" ? "#FFFFFF" : "#000000",
+                  },
+                },
+              }}
             />
           </FormControl>
           <FormControl

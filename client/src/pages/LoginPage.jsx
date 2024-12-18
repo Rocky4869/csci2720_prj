@@ -121,7 +121,7 @@ function LoginPage() {
             >
               Sign In
             </Button>
-            <Box display="flex" justifyContent="space-around" mt={2}>
+            <Box display="flex" justifyContent="center" mt={2}>
               <Button
                 component={Link}
                 href="/register"
@@ -129,14 +129,6 @@ function LoginPage() {
                 sx={{ textTransform: "none" }}
               >
                 Register
-              </Button>
-              <Button
-                component={Link}
-                href="/forgot-password"
-                variant="text"
-                sx={{ textTransform: "none" }}
-              >
-                Forgot password?
               </Button>
             </Box>
           </form>

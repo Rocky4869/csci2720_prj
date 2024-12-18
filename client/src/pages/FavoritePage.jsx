@@ -102,6 +102,7 @@ const FavoritePage = () => {
         backgroundColor: theme === "dark" ? "#121212" : "#F5F5F5",
         color: theme === "dark" ? "#FFFFFF" : "#000000",
         minHeight: "100vh",
+        paddingBottom: "50px",
       }}
     >
       <Navbar />
@@ -154,6 +155,14 @@ const FavoritePage = () => {
                     active
                     direction={sortOrder}
                     onClick={handleSort}
+                    sx={{
+                      color:
+                        theme === "dark" ? "#FFFFFF !important" : "#000000",
+                      "& .MuiTableSortLabel-icon": {
+                        color:
+                          theme === "dark" ? "#FFFFFF !important" : "#000000",
+                      },
+                    }}
                   >
                     Number of events
                   </TableSortLabel>
@@ -201,7 +210,7 @@ const FavoritePage = () => {
                           to={`/locations/${location.id}`}
                           style={{
                             textDecoration: "none",
-                            color: theme === "dark" ? "#1E90FF" : "#0000EE", // Link color
+                            color: "#007BFF",
                           }}
                         >
                           {location.name}

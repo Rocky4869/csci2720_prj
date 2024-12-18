@@ -23,17 +23,11 @@ const SingleLocationPage = () => {
   const [location, setLocation] = useState(null); // Location details
   const [comments, setComments] = useState([]); // List of comments for the location
   const [newComment, setNewComment] = useState(""); // New comment text
-  const [isFavorite, setIsFavorite] = useState(false); // Favorite status
   const [error, setError] = useState(""); // Error message for comment submission
   const [username, setUsername] = useState(""); // Logged-in username
 
   const { theme } = useTheme(); // Access the current theme
-  const [favorite, setFavorite] = useState([]);
-  const [favoriteArr, setFavoriteArr] = useState([]);
-
-  const [locations, setLocations] = useState([]);
   const [favLocation, setFavLocation] = useState([]);
- 
 
   // Function to decode token and extract the username
   const decodeToken = (token) => {
@@ -176,15 +170,8 @@ const SingleLocationPage = () => {
     }
   };
 
-  // Show loading state if location data is not yet loaded
   if (!location) {
-    return (
-      <Container>
-        <Typography variant="h5" align="center" sx={{ mt: 4 }}>
-          Loading...
-        </Typography>
-      </Container>
-    );
+    return <div></div>;
   }
 
   return (
@@ -232,7 +219,9 @@ const SingleLocationPage = () => {
               },
             }}
           >
-            {favLocation.includes(location._id) ? "Remove from Favorite" : "Add to Favorite"}
+            {favLocation.includes(location._id)
+              ? "Remove from Favorite"
+              : "Add to Favorite"}
           </Button>
         </Paper>
 

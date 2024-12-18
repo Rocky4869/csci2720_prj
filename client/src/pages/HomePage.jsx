@@ -186,6 +186,7 @@ const HomePage = () => {
         backgroundColor: theme === "dark" ? "#121212" : "#F5F5F5",
         color: theme === "dark" ? "#FFFFFF" : "#000000",
         minHeight: "100vh",
+        paddingBottom: "50px",
       }}
     >
       <Navbar />
@@ -216,11 +217,18 @@ const HomePage = () => {
                 mb: 1, // Adds some margin below the text
               }}
             >
-              Browse through the list of venues below. Use the filters to refine your search and find venues based on your preferences.
+              Browse through the list of venues below. Use the filters to refine
+              your search and find venues based on your preferences.
             </Typography>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Button
               onClick={() => setShowFilters(!showFilters)}
               variant="text"
@@ -234,7 +242,7 @@ const HomePage = () => {
           </div>
           <hr />
           {showFilters && ( // Conditionally render the filters
-            <div className="grid grid-cols-4 gap-10 items-center">
+            <div className="grid grid-cols-3 gap-10 items-center">
               <FormControl fullWidth margin="normal">
                 <Typography
                   gutterBottom
@@ -372,16 +380,15 @@ const HomePage = () => {
                     direction={sortOrder}
                     onClick={handleSort}
                     sx={{
-                      color: theme === "dark" ? "#FFFFFF" : "#000000",
-                      "&.Mui-active": {
-                        color: theme === "dark" ? "#FFFFFF" : "#000000",
-                      },
+                      color:
+                        theme === "dark" ? "#FFFFFF !important" : "#000000",
                       "& .MuiTableSortLabel-icon": {
-                        color: theme === "dark" ? "#FFFFFF" : "#000000",
+                        color:
+                          theme === "dark" ? "#FFFFFF !important" : "#000000",
                       },
                     }}
                   >
-                    Number of Events
+                    Number of events
                   </TableSortLabel>
                 </TableCell>
                 <TableCell
@@ -459,4 +466,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-

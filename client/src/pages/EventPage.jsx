@@ -46,7 +46,7 @@ const EventPage = () => {
 
       const locations = locationsResponse.data;
       const events = eventsResponse.data;
-      
+
       const updatedEvents = events.map((event) => ({
         ...event,
         venue: locations.find((location) => location._id === event.venue).name,
@@ -57,7 +57,7 @@ const EventPage = () => {
       console.error(err);
     }
   };
-  
+
   const updateLikeCount = (eventId, increment) => {
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
@@ -195,16 +195,16 @@ const EventPage = () => {
   }, [filterLiked, filterPrice, events, likedEvents, bookedEvents]);
 
   // Fetch data on component mount
-useEffect(() => {
-  const initializeData = async () => {
-    setEvents([]); // Reset state to avoid stale data
-    await fetchData();
-    await fetchLikedEvents();
-    await fetchBookedEvents();
-  };
+  useEffect(() => {
+    const initializeData = async () => {
+      setEvents([]); // Reset state to avoid stale data
+      await fetchData();
+      await fetchLikedEvents();
+      await fetchBookedEvents();
+    };
 
-  initializeData();
-}, [location.pathname]); // Re-run whenever the route changes
+    initializeData();
+  }, [location.pathname]); // Re-run whenever the route changes
 
   return (
     <div
@@ -212,6 +212,7 @@ useEffect(() => {
         backgroundColor: theme === "dark" ? "#121212" : "#F5F5F5",
         color: theme === "dark" ? "#FFFFFF" : "#000000",
         minHeight: "100vh",
+        paddingBottom: "50px",
       }}
     >
       <Navbar />
@@ -401,14 +402,16 @@ useEffect(() => {
                             {likedEvents[event._id] ? (
                               <ThumbUpAltIcon
                                 sx={{
-                                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                                  color:
+                                    theme === "dark" ? "#FFFFFF" : "#000000",
                                   fontSize: "24px", // Adjust icon size if needed
                                 }}
                               />
                             ) : (
                               <ThumbUpOffAltIcon
                                 sx={{
-                                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                                  color:
+                                    theme === "dark" ? "#FFFFFF" : "#000000",
                                   fontSize: "24px", // Adjust icon size if needed
                                 }}
                               />

@@ -30,7 +30,6 @@ router.post("/", authenticate, authorize(["admin"]), async (req, res) => {
     const { title, dateTime, description, presenter, venue, price } = req.body;
 
     const location = await Location.findOne({ _id: venue });
-    console.log(location);
     const eventId = (await Event.countDocuments()) + 1;
 
     if (!location) {
