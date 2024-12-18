@@ -13,80 +13,39 @@ import {
   TablePagination,
   Button,
   TableSortLabel,
-  FormControl,
-  TextField,
-  Select,
-  MenuItem,
-  Slider,
-  InputAdornment,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
-import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext"; // Import theme context
 
 const FavoritePage = () => {
   const [favorite, setFavorite] = useState([]);
-  const [favoriteArr, setFavoriteArr] = useState([]);
-
-  const [locations, setLocations] = useState([]);
-  const [filteredLocations, setFilteredLocations] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
-  const [currentLocation, setCurrentLocation] = useState({
-    latitude: null,
-    longitude: null,
-  });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const { theme } = useTheme(); // Access the current theme
 
   const { theme } = useTheme(); // Access the current theme
 
   //for fav button
   const fetchFavLocation = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/favorites", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      const favoriteArr = response.data;
-
-      // Extract _id values into a new array
-      const idsArray = favoriteArr.map(location => location._id);
-
-      // Output or use the idsArray as needed
-      console.log(idsArray);
-      setFavoriteArr(favoriteArr);
-      const favLocation = response.data;
-
-      setFavorite(favLocation);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  //for events
-  const fetchData = async () => {
-    try {
-      const [locationsResponse, eventsResponse] = await Promise.all([
-        axios.get("http://localhost:3000/locations"),
+      const [favLocationsResponse, eventsResponse] = await Promise.all([
+        axios.get("http://localhost:3000/favorites", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }),
         axios.get("http://localhost:3000/events"),
       ]);
-
-      const locations = locationsResponse.data;
+      const favLocation = favLocationsResponse.data;
       const eventCountMap = eventsResponse.data;
-      const updatedLocations = locations.map((location) => ({
+      const updatedFavLocations = favLocation.map((location) => ({
         ...location,
         eventCount:
           eventCountMap.filter((event) => event.venue === location._id)
             .length || 0,
       }));
-
-      setLocations(updatedLocations);
-      setFilteredLocations(updatedLocations);
+      setFavorite(updatedFavLocations);
     } catch (err) {
       console.error(err);
     }
@@ -94,10 +53,10 @@ const FavoritePage = () => {
 
   const handleFav = async (locationId) => {
     try {
-      const isFav = favorite[locationId];
-      const updatedFavLocation = { ...favorite, [locationId]: !isFav };
+      const updatedFavLocation = favorite.filter(
+        (location) => location._id !== locationId
+      );
       setFavorite(updatedFavLocation);
-
       await axios.post(
         `http://localhost:3000/favorites/${locationId}`,
         {},
@@ -116,32 +75,6 @@ const FavoritePage = () => {
     fetchFavLocation();
   }, []);
 
-  useEffect(() => {
-    fetchData();
-    // Get current location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting current location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
-  }, []);
-
-  useEffect(() => {
-    let filtered = locations;
-     setFilteredLocations(filtered);
-  }, [ locations]);
-
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -152,14 +85,14 @@ const FavoritePage = () => {
   };
 
   const handleSort = () => {
-    const sorted = [...filteredLocations].sort((a, b) => {
+    const sorted = [...favorite].sort((a, b) => {
       if (sortOrder === "asc") {
         return a.eventCount - b.eventCount;
       } else {
         return b.eventCount - a.eventCount;
       }
     });
-    setFilteredLocations(sorted);
+    setFavorite(sorted);
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
@@ -188,71 +121,138 @@ const FavoritePage = () => {
           </Typography>
         </Paper>
 
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Location</TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active
-                      direction={sortOrder}
-                      onClick={handleSort}
-                    >
-                      Number of events
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>Favorite</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {favoriteArr
+        <TableContainer
+          component={Paper}
+          sx={{
+            backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF",
+            color: theme === "dark" ? "#FFFFFF" : "#000000",
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  ID
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  Location
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  <TableSortLabel
+                    active
+                    direction={sortOrder}
+                    onClick={handleSort}
+                  >
+                    Number of events
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: theme === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                >
+                  Favorite
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Array.isArray(favorite) &&
+                favorite
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((location) => (
-                    <TableRow key={location.id}>
-                      <TableCell>{location.id}</TableCell>
-                      <TableCell>
-                        <Link to={`/locations/${location.id}`}>
+                    <TableRow
+                      key={location.id}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor:
+                            theme === "dark" ? "#444444" : "#f0f0f0", // Hover effect
+                        },
+                      }}
+                    >
+                      <TableCell
+                        sx={{
+                          color: theme === "dark" ? "#FFFFFF" : "#000000",
+                          "&:hover": {
+                            backgroundColor:
+                              theme === "dark" ? "#444444" : "#f0f0f0", // Hover effect
+                          },
+                        }}
+                      >
+                        {location.id}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          color: theme === "dark" ? "#FFFFFF" : "#000000",
+                        }}
+                      >
+                        <Link
+                          to={`/locations/${location.id}`}
+                          style={{
+                            textDecoration: "none",
+                            color: theme === "dark" ? "#1E90FF" : "#0000EE", // Link color
+                          }}
+                        >
                           {location.name}
                         </Link>
                       </TableCell>
-                      <TableCell>{location.eventCount}</TableCell>
+                      <TableCell
+                        sx={{
+                          color: theme === "dark" ? "#FFFFFF" : "#000000",
+                        }}
+                      >
+                        {location.eventCount || "N/A"}
+                      </TableCell>
 
                       <TableCell>
                         <Button
                           variant="contained"
-                          color="primary"
                           sx={{
                             textTransform: "none",
-                            backgroundColor: "white",
-                            color: "black",
+                            backgroundColor:
+                              theme === "dark" ? "#555555" : "#FFFFFF",
+                            color: theme === "dark" ? "#FFFFFF" : "#000000",
                             "&:hover": {
-                              backgroundColor: "#f0f0f0",
+                              backgroundColor:
+                                theme === "dark" ? "#666666" : "#F0F0F0",
                             },
                           }}
                           onClick={() => handleFav(location._id)}
                         >
                           {favorite[location._id]
                             ? "Add to Favorite"
-                            : " Remove Favorite"}
+                            : " Remove from Favorite"}
                         </Button>
                       </TableCell>
                     </TableRow>
                   ))}
-              </TableBody>
-            </Table>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={favoriteArr.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableContainer>
-        </div>
+            </TableBody>
+          </Table>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={favorite.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            sx={{
+              backgroundColor: theme === "dark" ? "#333333" : "#FFFFFF",
+              color: theme === "dark" ? "#FFFFFF" : "#000000",
+            }}
+          />
+        </TableContainer>
       </Container>
     </div>
   );
