@@ -1,3 +1,5 @@
+// ..pages/AdminUserPage.jsx
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -33,6 +35,8 @@ const AdminUserPage = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -167,6 +171,20 @@ const AdminUserPage = () => {
     setPage(0);
   };
 
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch = user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesRole = roleFilter === "all" ? true : user.role === roleFilter;
+    return matchesSearch && matchesRole;
+  });
+
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch = user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesRole = roleFilter === "all" ? true : user.role === roleFilter;
+    return matchesSearch && matchesRole;
+  });
+
   // Fetch users on component mount
   useEffect(() => {
     fetchUsers();
@@ -220,6 +238,29 @@ const AdminUserPage = () => {
           Create New User
         </Button>
 
+          <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+            <TextField
+              label="Search Users"
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              sx={{ flexGrow: 1 }}
+            />
+            <FormControl variant="outlined" size="small" style={{ minWidth: 200 }}>
+              <InputLabel>Role Filter</InputLabel>
+              <Select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                label="Role Filter"
+              >
+                <MenuItem value="all">All Roles</MenuItem>
+                <MenuItem value="user">User</MenuItem>
+                <MenuItem value="admin">Admin</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+
         <TableContainer
           component={Paper}
           sx={{
@@ -241,7 +282,7 @@ const AdminUserPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users
+              {filteredUsers
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((user) => (
                   <TableRow
