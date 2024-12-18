@@ -39,11 +39,6 @@ app.use("/favorites", favoriteRoutes); // Use the favorites route
 
 const fetchData = async () => {
   try {
-    // Drop the database - events and locations
-    // await mongoose.connection.db.dropDatabase();
-    await Location.deleteMany({});
-    await Event.deleteMany({});
-
     // Fetch events data
     const eventsResponse = await axios.get(
       "https://www.lcsd.gov.hk/datagovhk/event/events.xml"

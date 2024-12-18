@@ -327,9 +327,9 @@ const EventPage = () => {
                     <TableRow
                       key={event._id}
                       sx={{
-            
                         "&:hover": {
-                          backgroundColor: theme === "dark" ? "#444444" : "#F0F0F0", // Hover effect color
+                          backgroundColor:
+                            theme === "dark" ? "#444444" : "#F0F0F0", // Hover effect color
                         },
                       }}
                     >
@@ -403,7 +403,7 @@ const EventPage = () => {
               </TableBody>
             </Table>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[5, 10, 25, 50]}
               component="div"
               count={events.length}
               rowsPerPage={rowsPerPage}

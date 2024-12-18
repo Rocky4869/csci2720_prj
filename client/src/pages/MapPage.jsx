@@ -45,13 +45,7 @@ const MapPage = () => {
   }, {});
 
   if (!isLoaded) {
-    return (
-      <Container>
-        <Typography variant="h5" align="center" sx={{ mt: 4 }}>
-          Loading...
-        </Typography>
-      </Container>
-    );
+    return <div></div>;
   }
 
   return (
@@ -82,7 +76,8 @@ const MapPage = () => {
               color: theme === "dark" ? "#B0B0B0" : "#6C6C6C",
             }}
           >
-            Explore the locations of different venues on the map below. Click on the markers to view more details about each venue.
+            Explore the locations of different venues on the map below. Click on
+            the markers to view more details about each venue.
           </Typography>
         </Paper>
 
@@ -100,7 +95,9 @@ const MapPage = () => {
               <Typography variant="h6" gutterBottom>
                 Map
               </Typography>
-              <div style={{ height: "400px", width: "100%", borderRadius: "8px" }}>
+              <div
+                style={{ height: "400px", width: "100%", borderRadius: "8px" }}
+              >
                 <GoogleMap
                   zoom={11}
                   center={defaultPosition}
