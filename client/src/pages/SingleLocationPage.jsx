@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+
 import {
   Typography,
   Button,
@@ -23,6 +25,12 @@ const SingleLocationPage = () => {
   const [isFavorite, setIsFavorite] = useState(false); // Favorite status
   const [error, setError] = useState(""); // Error message for comment submission
   const [username, setUsername] = useState(""); // Logged-in username
+  const [favorite, setFavorite] = useState([]);
+  const [favoriteArr, setFavoriteArr] = useState([]);
+
+  const [locations, setLocations] = useState([]);
+  const [favLocation, setFavLocation] = useState([]);
+ 
 
   // Function to decode token and extract the username
   const decodeToken = (token) => {
@@ -78,24 +86,53 @@ const SingleLocationPage = () => {
     fetchLocationData();
   }, [id]);
 
-  // Handle adding/removing from favorites
-  const handleAddToFavorite = async () => {
+  const fetchFavLocation = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/favorites`, {
-        method: isFavorite ? "DELETE" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locationId: id }),
+      const response = await axios.get("http://localhost:3000/favorites", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
-
-      if (response.ok) {
-        setIsFavorite(!isFavorite); // Toggle favorite status
-      } else {
-        console.error("Error updating favorite status");
-      }
+      const favLocation = response.data.reduce(
+        (acc, location) => [...acc, location._id],
+        []
+      );
+      setFavLocation(favLocation);
     } catch (err) {
-      console.error("Error adding to favorites:", err);
+      console.error(err);
     }
   };
+
+  const handleAddFavorite = async (locationId) => {
+    try {
+      // Check if the location is already in the favorites array
+      const isFav = favLocation.includes(locationId);
+
+      // Update the favorites state
+      const updatedFavLocation = isFav
+        ? favLocation.filter((id) => id !== locationId) // Remove from favorites
+        : [...favLocation, locationId]; // Add to favorites
+
+      setFavLocation(updatedFavLocation);
+
+      // Send the request to the server (as earlier)
+      await axios.post(
+        `http://localhost:3000/favorites/${locationId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchFavLocation();
+  }, []);
 
   // Handle adding a new comment
   const handleAddComment = async () => {
@@ -154,7 +191,7 @@ const SingleLocationPage = () => {
           {/* Add to Favorite Button */}
           <Button
             variant="contained"
-            onClick={handleAddToFavorite}
+            onClick={() => handleAddFavorite(location._id)}
             sx={{
               mt: 2,
               textTransform: "none",
@@ -168,7 +205,7 @@ const SingleLocationPage = () => {
               },
             }}
           >
-            {isFavorite ? "Remove from Favorite" : "Add to Favorite"}
+            {favLocation.includes(location._id) ? "Remove from Favorite" : "Add to Favorite"}
           </Button>
         </Paper>
 
