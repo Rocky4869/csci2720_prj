@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import {
   Container,
@@ -34,7 +35,7 @@ const EventPage = () => {
   const [bookedEvents, setBookedEvents] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const location = useLocation();
   // Fetch events and related data
   const fetchData = async () => {
     try {
@@ -45,14 +46,26 @@ const EventPage = () => {
 
       const locations = locationsResponse.data;
       const events = eventsResponse.data;
+      
       const updatedEvents = events.map((event) => ({
         ...event,
         venue: locations.find((location) => location._id === event.venue).name,
+        likeCount: event.likeCount || 0, // Initialize likeCount
       }));
       setEvents(updatedEvents);
     } catch (err) {
       console.error(err);
     }
+  };
+  
+  const updateLikeCount = (eventId, increment) => {
+    setEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event._id === eventId
+          ? { ...event, likeCount: event.likeCount + increment }
+          : event
+      )
+    );
   };
 
   // Fetch liked events by the user
@@ -110,6 +123,8 @@ const EventPage = () => {
       const isLiked = likedEvents[eventId];
       const updatedLikedEvents = { ...likedEvents, [eventId]: !isLiked };
       setLikedEvents(updatedLikedEvents);
+
+      updateLikeCount(eventId, isLiked ? -1 : 1);
 
       await axios.post(
         `http://localhost:3000/likes/${eventId}`,
@@ -180,11 +195,16 @@ const EventPage = () => {
   }, [filterLiked, filterPrice, events, likedEvents, bookedEvents]);
 
   // Fetch data on component mount
-  useEffect(() => {
-    fetchData();
-    fetchLikedEvents();
-    fetchBookedEvents();
-  }, []);
+useEffect(() => {
+  const initializeData = async () => {
+    setEvents([]); // Reset state to avoid stale data
+    await fetchData();
+    await fetchLikedEvents();
+    await fetchBookedEvents();
+  };
+
+  initializeData();
+}, [location.pathname]); // Re-run whenever the route changes
 
   return (
     <div
@@ -369,21 +389,41 @@ const EventPage = () => {
                         {event.price}
                       </TableCell>
                       <TableCell>
-                        <IconButton onClick={() => handleLike(event._id)}>
-                          {likedEvents[event._id] ? (
-                            <ThumbUpAltIcon
-                              sx={{
-                                color: theme === "dark" ? "#FFFFFF" : "#000000",
-                              }}
-                            />
-                          ) : (
-                            <ThumbUpOffAltIcon
-                              sx={{
-                                color: theme === "dark" ? "#FFFFFF" : "#000000",
-                              }}
-                            />
-                          )}
-                        </IconButton>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column", // Stack the icon and number vertically
+                            alignItems: "center", // Center horizontally
+                            justifyContent: "center", // Center vertically if needed
+                          }}
+                        >
+                          <IconButton onClick={() => handleLike(event._id)}>
+                            {likedEvents[event._id] ? (
+                              <ThumbUpAltIcon
+                                sx={{
+                                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                                  fontSize: "24px", // Adjust icon size if needed
+                                }}
+                              />
+                            ) : (
+                              <ThumbUpOffAltIcon
+                                sx={{
+                                  color: theme === "dark" ? "#FFFFFF" : "#000000",
+                                  fontSize: "24px", // Adjust icon size if needed
+                                }}
+                              />
+                            )}
+                          </IconButton>
+                          <span
+                            style={{
+                              fontSize: "14px", // Adjust number font size if needed
+                              color: theme === "dark" ? "#FFFFFF" : "#000000",
+                              marginTop: "-8px", // Reduce spacing between thumb and number if needed
+                            }}
+                          >
+                            {event.likeCount}
+                          </span>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Button
